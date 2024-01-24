@@ -150,7 +150,7 @@ let End = 0;
 
 
 let CurrentTicks = 0;
-let TickRate = 0.01
+let TickRate = 1
 let currentlydragging;
 
 let Mortals = {};
@@ -201,11 +201,13 @@ function update()
         let CurrentAction = Actions[i];
         if (ActiveActions[CurrentAction.Name] == undefined)
         {
+            
             let Create = true;
             for(let x = 0; x < Object.keys(CurrentAction.Reqs.Acts).length; x++)
             {
                 let CheckAction = Object.keys(CurrentAction.Reqs.Acts)[x]
                 let ActionValue = Object.values(CurrentAction.Reqs.Acts)[x]
+                console.log(ActiveActions[CheckAction].CurrentAmount)
                 if (ActiveActions[CheckAction].CurrentAmount != ActionValue)
                 {
                     Create = false;
@@ -339,7 +341,6 @@ class Mortal
         }
         if (this.CurrentStamina <= 0)
         {
-            console.log("s");
             MortalDiv.appendChild(this.MainDiv);
             this.StaminaBarDiv.style.width = "0%"
         }
@@ -363,16 +364,17 @@ class Action
     CurrentAmount = 0;
     MaxAmount;
 
-
+    Hidden = false;
     CurrentProgress = 0;
     
-    ProgressRate = 0.01;
+    ProgressRate = 0.1;
 
     constructor(Num)
     {
         this.MaxProgress = Actions[Num].MaxProgress;
         this.Desc = Actions[Num].Desc;
         this.Name = Actions[Num].Name;
+        this.MaxAmount = Actions[Num].MaxAmount
 
 
         this.CreateHtml();
@@ -416,26 +418,36 @@ class Action
     }
     Progress(TickRate)
     {
-        
-        this.SetProgressRate()
-        
-        if (this.CurrentProgress != 0)
+        if ( this.Hidden == false)
         {
-            this.ActionProgressDiv.style.width = ((this.CurrentProgress/this.MaxProgress) * 100) + "%"
-            this.ActionProgressTextDiv.innerText = this.CurrentProgress.toFixed(1) + "/" + this.MaxProgress + " (" + (((this.CurrentProgress/this.MaxProgress) * 100).toFixed(1) + "%") + ")"
+            this.SetProgressRate()
             
+            if (this.CurrentProgress != 0)
+            {
+                this.ActionProgressDiv.style.width = ((this.CurrentProgress/this.MaxProgress) * 100) + "%"
+                this.ActionProgressTextDiv.innerText = this.CurrentProgress.toFixed(1) + "/" + this.MaxProgress + " (" + (((this.CurrentProgress/this.MaxProgress) * 100).toFixed(1) + "%") + ")"
+                
+            }
+            else
+            {
+                this.ActionProgressDiv.style.width = "0%"
+            }
+            this.CurrentProgress += this.ProgressRate * TickRate
+            if (this.CurrentAmount == this.MaxAmount)
+            {
+                this.Hidden = true;
+            }
+            if(this.CurrentProgress >= this.MaxProgress)
+            {
+                this.CurrentProgress = 0;
+                this.CurrentAmount += 1;
+            }
         }
         else
         {
-            this.ActionProgressDiv.style.width = "0%"
+            
+            this.MainDiv.style.display = "none";
         }
-        this.CurrentProgress += this.ProgressRate * TickRate
-
-        if(this.CurrentProgress >= this.MaxProgress)
-        {
-            this.CurrentProgress = 0;
-        }
-        
         this.ProgressRate = 0;
     }
 
