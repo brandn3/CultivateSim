@@ -243,7 +243,7 @@ const BuildDatabase = [
             },
             "Mats":
             {
-                
+               Wood: 10 
             }
         }
     }
