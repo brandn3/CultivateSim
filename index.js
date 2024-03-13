@@ -1,3 +1,4 @@
+"use strict"
 const Names = [
     "SMITH",
     "JOHNSON",
@@ -101,16 +102,26 @@ const Names = [
     "FISHER",
     "HENDERSON"
 ]
-const Actions = [
+const ActionDatabase = [
+    {
+        Name: "",
+        "Desc":"",
+        "MaxProgress":100,
+        "MaxAmount": 5,
+        "Log":"",
+        "Reqs":{
+            "Acts":{
+                "Never": -1
+            }
+        }
+
+    },
     {
         "Name": "Wake Up",
-        "Desc":"You need to Wake up",
-        "MaxProgress":100,
+        "Desc":"You need to get up",
+        "MaxProgress":10,
         "MaxAmount": 1,
-        "Completion": () => 
-        {
-            console.log(CurrentTicks)
-        },
+        "Log":"You push yourself up to standing position, your body aches all over",
         "Reqs":{
             "Acts":{
 
@@ -119,11 +130,11 @@ const Actions = [
 
     },
     {
-        "Name": "Walk around",
-        "Desc":"You need to Wake up",
-        "MaxProgress":100,
+        "Name": "Look around",
+        "Desc":"Observe your surroundings",
+        "MaxProgress":10,
         "MaxAmount": 1,
-        "test": () => {console.log(CurrentTicks)},
+        "Log":"You're in a forest, the trees are fairly thin and the leaves are abundant",
         "Reqs":{
             "Acts":{
                 "Wake Up": 1
@@ -135,123 +146,105 @@ const Actions = [
         }
 
     },
+    {
+        "Name": "Try to remember",
+        "Desc":"You dont know where you are, try to retrace your steps",
+        "MaxProgress":10,
+        "MaxAmount": 1,
+        "Log":"Your memory is blank, but you get the feeling that the forest is very dangerous",
+        "Reqs":{
+            "Acts":{
+                "Look around": 1
+            }
+        }
+
+    },
+    {
+        "Name": "Create a plan",
+        "Desc":"You are going to need to keep yourself save, try to think of what to do next",
+        "MaxProgress":10,
+        "MaxAmount": 1,
+        "Log":"You decide to stay where you are and build a shelter, but you're going to need wood",
+        "Reqs":{
+            "Acts":{
+                "Try to remember": 1
+            }
+        }
+
+    },
+    {
+        "Name": "Gather Sticks",
+        "Desc":"Sticks are abundant, covering every peice of grass",
+        "MaxProgress":5,
+        "MaxAmount": -1,
+        "Log":"You have gained 1 Stick",
+        "Reqs":{
+            "Acts":{
+                "Create a plan": 1
+            }
+        }
+
+    },
 ]
-let Main = document.createElement('div');
-let Tabs = document.createElement('div');
-let ActionDiv = document.createElement('div');
-let MortalDiv = document.createElement('div');
-let MaterialDiv = document.createElement('div')
-let LogDiv = document.createElement('div');
-//let CurrentDate = new Date();
-//CurrentDate.getDate();
+const BuildDatabase = []
+//console.log(Actions[1])
+
+const Main = document.createElement('div');
+const Tabs = document.createElement('div');
+const ActionTab = document.createElement('div');
+const BuildTab = document.createElement('div');
+const ActionDiv = document.createElement('div');
+const BuildDiv = document.createElement('div')
+const MortalDiv = document.createElement('div');
+const MaterialDiv = document.createElement('div')
+const LogDiv = document.createElement('div');
+
+
 let TimerName;
 let Start = 0;
 let End = 0;
 
 
 let CurrentTicks = 0;
-let TickRate = 1
+
 let currentlydragging;
+
+let fps = 60, now = 0, then = performance.now() ,fpsInterval, fpsCounter = 0
+
+
 
 let Mortals = {};
 let ActiveActions = {} ;
+let Materials = {}
 
 
 
-
-
-function setUp()
+function Complete(Num)
 {
-    Main.setAttribute("id", "Main");
-    Tabs.setAttribute("id", "Tabs");
-    ActionDiv.setAttribute("id", "ActionDiv");
-    MortalDiv.setAttribute("id", "MortalDiv");
-    MaterialDiv.setAttribute("id", "MaterialDiv");
-    LogDiv.setAttribute("id", "LogDiv");
     
-    new Mortal;
-
-
-
-    
-
-
-
-    MortalDiv.addEventListener("dragover", ()=>{
-       MortalDiv.appendChild(currentlydragging.MainDiv);
-    })
-
-
-
-    document.body.appendChild(Main)
-
-    Main.appendChild(Tabs)
-    Main.appendChild(ActionDiv)
-    Main.appendChild(MortalDiv)
-    Main.appendChild(MaterialDiv);
-    Main.appendChild(LogDiv)
-    //CurrentTicks += 0.10;
-    requestAnimationFrame(update)
-}
-function update()
-{
-   // StartTime("Update Function");
-    for(let i = 0; i< Actions.length; i++)
+    switch(Num)
     {
-        let CurrentAction = Actions[i];
-        if (ActiveActions[CurrentAction.Name] == undefined)
-        {
+        case 1:
             
-            let Create = true;
-            for(let x = 0; x < Object.keys(CurrentAction.Reqs.Acts).length; x++)
-            {
-                let CheckAction = Object.keys(CurrentAction.Reqs.Acts)[x]
-                let ActionValue = Object.values(CurrentAction.Reqs.Acts)[x]
-                console.log(ActiveActions[CheckAction].CurrentAmount)
-                if (ActiveActions[CheckAction].CurrentAmount != ActionValue)
-                {
-                    Create = false;
-                }
-            }
-
-
-            if(Create == true)
-            {
-                new Action(i)
-            }
-        }
+        break;
+        case "Gather Sticks":
+            Materials["Sticks"].Amount += 1;
+        break;
+        case 0:
+            
+        break;
+        case 0:
+            
+        break;
+        
     }
-
-
-    let action = Object.values(ActiveActions);
-    let mortal = Object.values(Mortals);
     
-    for (let i = 0; i < Object.values(ActiveActions).length; i++)
-    {
-        
-        action[i].Progress(TickRate)
-        
-    }
-    for (let i = 0; i < Object.values(Mortals).length; i++)
-    {
-        
-        mortal[i].Progress();
-        
-    }
+}
 
 
-    //CurrentTicks -= 0.10
-    //EndTime()
-    requestAnimationFrame(update);
-}
-function GenerateName()
-{
-    return Names[getRandomArbitrary(0,20).toFixed(0)]
-}
 function getRandomArbitrary(min, max) {
     return Math.random() * (max - min) + min;
 }
-
 
 function StartTime(Name)
 {
@@ -273,13 +266,26 @@ class Mortal
     
     MainDiv = document.createElement("div") ;
     NameDiv = document.createElement("div");
-    StatDiv = document.createElement("div");
-    SkillDiv = document.createElement("div");
+    InformationDiv = document.createElement("div");
+    //InformationDiv = document.createElement("div");
     StaminaDiv = document.createElement("div");
     StaminaBarDiv = document.createElement("div");
 
-    Name = GenerateName();
-    Strength = 5;
+    InformationToolTipDiv = document.createElement("div")
+    InfoDiv = document.createElement('div')
+    StatDiv = document.createElement('div');
+    SkillDiv = document.createElement('div');
+
+    Name = Names[getRandomArbitrary(0,20).toFixed(0)];
+    age = getRandomArbitrary(16, 35).toFixed(0);
+
+
+    Strength = getRandomArbitrary(1,2).toFixed(2);
+    Agility = getRandomArbitrary(1,2).toFixed(2);
+    Perception = getRandomArbitrary(0,2).toFixed(2);
+    Endurence = getRandomArbitrary(0,2).toFixed(2)
+    Luck = getRandomArbitrary(0,2).toFixed(2)
+
     MaxStamina = 100;
     CurrentStamina = 100
 
@@ -287,40 +293,61 @@ class Mortal
     {
         Mortals[this.Name] = this;
         this.CreateHtml()
-        this.MainDiv.addEventListener("dragstart", ()=> {
-
-            currentlydragging = this;
+        this.MainDiv.addEventListener("dragstart", e => {
+            currentlydragging = this.MainDiv;
             this.MainDiv.classList.add("dragging");
         })
-        this.MainDiv.addEventListener("dragend", ()=> {
+        this.MainDiv.addEventListener("dragend", e => {
 
             this.MainDiv.classList.remove("dragging")
         })
+        this.InformationDiv.addEventListener("mousemove", (e) => {this.ShowToolTip(e) })
 
+        this.InformationDiv.addEventListener("mouseenter", (e) => {this.InformationToolTipDiv.style.display = "block" })
+        this.InformationDiv.addEventListener("mouseleave", (e) => {this.InformationToolTipDiv.style.display = "none" })
     }
 
     CreateHtml()
     {
         this.MainDiv.classList.add("MortalMainDiv");
         this.NameDiv.classList.add("MortalNameDiv");
-        this.StatDiv.classList.add("MortalStatDiv");
-        this.SkillDiv.classList.add("MortalSkillDiv");
+        this.InformationDiv.classList.add("MortalInformationDiv");
+        this.InformationDiv.classList.add("Button")
         this.StaminaDiv.classList.add("MortalStaminaDiv");
         this.StaminaBarDiv.classList.add("MortalStaminaBarDiv")
-        
+
+        this.InformationToolTipDiv.classList.add("InformationToolTipDiv")
+        this.InfoDiv.classList.add("InfoDiv");
+        this.StatDiv.classList.add("StatDiv");
+        this.SkillDiv.classList.add("SkillDiv");
 
         this.MainDiv.setAttribute("id", this.Name)
         this.MainDiv.setAttribute("draggable", "true");
         this.NameDiv.innerText = this.Name;
-        this.StatDiv.innerText = "Stat"
-        this.SkillDiv.innerText = "Skill"
-        this.StaminaDiv.innerText = "100/100"
+        this.InformationDiv.innerText = "Information";
+        this.StaminaDiv.innerText = "100/100";
+
+        this.InfoDiv.innerText = 
+        "Name: " + this.Name + "\n" +
+        "Rank: Mortal \n" +
+        "Tier: 0 \n" +
+        "Age: " + this.age + "\n";
+        this.StatDiv.innerText = 
+        "Strength: " + this.Strength + "\n" +
+        "Agility: " + this.Agility + "\n" +
+        "Endurence: " + this.Endurence + "\n" +
+        "Perception: " + this.Perception + "\n" +
+        "Luck: " + this.Luck + "\n" 
+
+        Main.appendChild(this.InformationToolTipDiv);
+        this.InformationToolTipDiv.appendChild(this.InfoDiv);
+        this.InformationToolTipDiv.appendChild(this.StatDiv);
+        this.InformationToolTipDiv.appendChild(this.SkillDiv);
 
         this.StaminaDiv.appendChild(this.StaminaBarDiv)
 
         this.MainDiv.appendChild(this.NameDiv);
-        this.MainDiv.appendChild(this.StatDiv);
-        this.MainDiv.appendChild(this.SkillDiv);
+        this.MainDiv.appendChild(this.InformationDiv);
         this.MainDiv.appendChild(this.StaminaDiv)
         this.MainDiv.appendChild(this.StaminaBarDiv)
         
@@ -332,22 +359,40 @@ class Mortal
         if(this.MainDiv.parentElement.id == "MortalDiv" && this.CurrentStamina < this.MaxStamina)
         {
             this.CurrentStamina += 0.1;
-        }
-        if (this.CurrentStamina != 0)
+        }  
+    }
+    UpdateHTML()
+    {
+        if (this.CurrentStamina >= 0)
         {
             this.StaminaBarDiv.style.width = ((this.CurrentStamina/this.MaxStamina) * 100) + "%"
             
             this.StaminaDiv.innerText = this.CurrentStamina.toFixed(1) + "/" + this.MaxStamina
         }
-        if (this.CurrentStamina <= 0)
+        else
         {
             MortalDiv.appendChild(this.MainDiv);
             this.StaminaBarDiv.style.width = "0%"
         }
-
-       
     }
+    ShowToolTip(event)
+    {
+        if(event.clientX + this.InformationToolTipDiv.getBoundingClientRect().width >= Main.getBoundingClientRect().width )
+        {
+            this.InformationToolTipDiv.style.left = ""
+            this.InformationToolTipDiv.style.right = (Main.getBoundingClientRect().width - event.clientX ) - 5 +"px"
+            this.InformationToolTipDiv.style.top = event.clientY + 5 + "px"
 
+        }
+        else
+        {
+            this.InformationToolTipDiv.style.right = ""
+            this.InformationToolTipDiv.style.left = event.clientX + 5 +"px"
+            this.InformationToolTipDiv.style.top = event.clientY + 5 + "px"
+        }
+        
+        //this.InformationToolTipDiv.style.left = "0px"
+    }
 }
 class Action
 {
@@ -357,34 +402,39 @@ class Action
     ActionProgressDiv = document.createElement('div');
     ActionProgressTextDiv = document.createElement('div')
 
+    ActionToolTipDiv = document.createElement("div");
+    InfoDiv = document.createElement("div")
+
+    //ToolTipDiv = document.createElement("")
+
     ActiveWorkers = [];
+    MortalsHtml;
 
-    Name;
-    MaxProgress;
+    Stats;
+
+    Num;
     CurrentAmount = 0;
-    MaxAmount;
-
     Hidden = false;
     CurrentProgress = 0;
-    
     ProgressRate = 0.1;
 
     constructor(Num)
     {
-        this.MaxProgress = Actions[Num].MaxProgress;
-        this.Desc = Actions[Num].Desc;
-        this.Name = Actions[Num].Name;
-        this.MaxAmount = Actions[Num].MaxAmount
-
+        this.Stats = ActionDatabase[Num]
+        this.Num = Num
 
         this.CreateHtml();
         
-        
         this.ActionMortalDiv.addEventListener("dragover", ()=>{
-            this.ActionMortalDiv.appendChild(currentlydragging.MainDiv);
+            this.ActionMortalDiv.appendChild(currentlydragging);
+            
         })
-       
-       ActiveActions[this.Name] = this
+
+        this.ActionNameDiv.addEventListener("mousemove", (e) => {this.ShowToolTip(e) })
+
+        this.ActionNameDiv.addEventListener("mouseenter", (e) => {this.ActionToolTipDiv.style.display = "block" })
+        this.ActionNameDiv.addEventListener("mouseleave", (e) => {this.ActionToolTipDiv.style.display = "none" })
+       ActiveActions[this.Stats.Name] = this
     }
     CreateHtml()
     {
@@ -395,8 +445,18 @@ class Action
         this.ActionProgressDiv.classList.add("ActionProgressDiv")
         this.ActionProgressTextDiv.classList.add("ActionProgressTextDiv")
 
-        this.ActionNameDiv.innerText = this.Name;
+        this.ActionToolTipDiv.classList.add('ActionToolTipDiv')
+        this.InfoDiv.classList.add('InfoDiv')
+        
+        this.InfoDiv.innerText = 
+        "Name: " + this.Stats.Name + "\n" +
+        "Description: " + this.Stats.Desc  + "\n" +
+        "Progress: " + this.CurrentProgress + "/" + this.Stats.MaxAmount;
 
+        this.ActionNameDiv.innerText = this.Stats.Name;
+
+        this.ActionToolTipDiv.appendChild(this.InfoDiv);
+        Main.appendChild(this.ActionToolTipDiv)
         this.MainDiv.appendChild(this.ActionProgressTextDiv);
         this.MainDiv.appendChild(this.ActionNameDiv);
         this.MainDiv.appendChild(this.ActionProgressDiv)
@@ -404,53 +464,352 @@ class Action
 
         ActionDiv.appendChild(this.MainDiv);
     }
-    SetProgressRate()
-    {
-        let MortalsHtml = this.ActionMortalDiv.children;
-
-        for (let x = 0; x < MortalsHtml.length; x++)
-        {
-            let CurrentMortal = Mortals[MortalsHtml[x].id]
-            this.ProgressRate += CurrentMortal.Strength
-            CurrentMortal.CurrentStamina -= 0.1
-        }
-        
-    }
-    Progress(TickRate)
+    Progress()
     {
         if ( this.Hidden == false)
         {
-            this.SetProgressRate()
-            
-            if (this.CurrentProgress != 0)
+            this.MortalsHtml = this.ActionMortalDiv.children;
+            for (let x = 0; x < this.MortalsHtml.length; x++)// sets progress rate of Action based off mortals working on it.
             {
-                this.ActionProgressDiv.style.width = ((this.CurrentProgress/this.MaxProgress) * 100) + "%"
-                this.ActionProgressTextDiv.innerText = this.CurrentProgress.toFixed(1) + "/" + this.MaxProgress + " (" + (((this.CurrentProgress/this.MaxProgress) * 100).toFixed(1) + "%") + ")"
+                let CurrentMortal = Mortals[this.MortalsHtml[x].id]
+                this.ProgressRate += CurrentMortal.Strength
+                CurrentMortal.CurrentStamina -= 5 / fps
+            }
+            if(this.CurrentProgress >= this.Stats.MaxProgress)// when actions completes once
+            {
                 
-            }
-            else
-            {
-                this.ActionProgressDiv.style.width = "0%"
-            }
-            this.CurrentProgress += this.ProgressRate * TickRate
-            if (this.CurrentAmount == this.MaxAmount)
-            {
-                this.Hidden = true;
-            }
-            if(this.CurrentProgress >= this.MaxProgress)
-            {
+                Complete(this.Stats.Name);
                 this.CurrentProgress = 0;
                 this.CurrentAmount += 1;
             }
+            this.CurrentProgress += this.ProgressRate / fps // increments Action Progress
+        }
+       
+        this.ProgressRate = 0;
+    }
+    UpdateHTML()
+    {
+        
+        if (this.CurrentProgress != 0)
+        {
+            this.ActionProgressDiv.style.width = ((this.CurrentProgress/this.Stats.MaxProgress) * 100) + "%"
+            this.ActionProgressTextDiv.innerText = this.CurrentProgress.toFixed(1) + "/" + this.Stats.MaxProgress + " (" + (((this.CurrentProgress/this.Stats.MaxProgress) * 100).toFixed(1) + "%") + ")"
+            
         }
         else
+        {
+            this.ActionProgressDiv.style.width = "0%"
+        }
+        if(this.CurrentProgress >= this.Stats.MaxProgress)// when actions completes once
+        {
+            gameData.CreateLog(this.Stats.Log); 
+            console.log("test");  
+        }
+        if (this.CurrentAmount == this.Stats.MaxAmount) // when actions reached max actions
+            {
+                
+                this.Hidden = true;
+                for(let x = 0; x < this.MortalsHtml.length; x++)
+                {
+                    MortalDiv.appendChild(this.MortalsHtml[x])
+                }
+            } 
+        if(this.Hidden == true)
         {
             
             this.MainDiv.style.display = "none";
         }
-        this.ProgressRate = 0;
     }
+    ShowToolTip(event)
+    {
+        if(event.clientX + this.ActionToolTipDiv.getBoundingClientRect().width >= Main.getBoundingClientRect().width )
+        {
+            this.ActionToolTipDiv.style.left = ""
+            this.ActionToolTipDiv.style.right = (Main.getBoundingClientRect().width - event.clientX ) - 5 +"px"
+            this.ActionToolTipDiv.style.top = event.clientY + 5 + "px"
 
+        }
+        else
+        {
+            this.ActionToolTipDiv.style.right = ""
+            this.ActionToolTipDiv.style.left = event.clientX + 5 +"px"
+            this.ActionToolTipDiv.style.top = event.clientY + 5 + "px"
+        }
+    }
+}
+class Material
+{
+    MainDiv = document.createElement("div");
+    NameDiv = document.createElement("div");
+    AmountDiv = document.createElement("div");
+
+    Name;
+    Amount = 0;
+    MaxAmount = 100;
+    Rate;
+
+    constructor(Name)
+    {
+        this.Name = Name
+        this.CreateHtml()
+        Materials[Name] = this;
+    }
+    CreateHtml()
+    {
+        this.MainDiv.setAttribute("id",this.Name);
+        this.NameDiv.classList.add("MaterialNameDiv")
+        this.AmountDiv.classList.add("MaterialAmountDiv")
+
+
+        this.NameDiv.innerText = this.Name;
+        this.AmountDiv.innerText = this.Amount + "/" + this.MaxAmount
+
+        this.MainDiv.appendChild(this.NameDiv);
+        this.MainDiv.appendChild(this.AmountDiv);
+
+        MaterialDiv.appendChild(this.MainDiv);
+    }
+    Update()
+    {
+        
+        this.AmountDiv.innerText = this.Amount + "/" + this.MaxAmount
+    }
+}
+class Building
+{
+    constructor()
+    {
+        let MainDiv = document.createElement('div');
+    }
+}
+class Game
+{
+    constructor()
+    {
+        Main.setAttribute("id", "Main");
+        Tabs.setAttribute("id", "Tabs");
+        ActionTab.setAttribute('id', "ActionTab");
+        ActionTab.classList.add("Button");
+        BuildTab.setAttribute('id', "BuildTab");
+        BuildTab.classList.add("Button")
+        ActionDiv.setAttribute("id", "ActionDiv");
+        BuildDiv.setAttribute('id', "BuildDiv")
+        MortalDiv.setAttribute("id", "MortalDiv");
+        MaterialDiv.setAttribute("id", "MaterialDiv");
+        LogDiv.setAttribute("id", "LogDiv");
+        ActionDiv.style.display = "block";
+        BuildDiv.style.display = "none";
+
+        new Mortal;
+        new Mortal;
+        new Mortal;
+        new Action(1)
+        new Material("Sticks")
+        
+    
+    
+        
+        
+    
+        MortalDiv.addEventListener("dragover", e =>{
+            e.preventDefault()
+            let afterElement = this.GetElementBelow(MortalDiv, e.clientY);
+            if ( afterElement == null)
+            {
+                MortalDiv.appendChild(currentlydragging);
+            }
+            else
+            {
+                MortalDiv.insertBefore(currentlydragging, afterElement)
+            }
+
+        })
+    
+    
+        ActionTab.innerText = "Actions"
+        BuildTab.innerText = "Build"
+
+        document.addEventListener("click", (Event) => {this.Onclick(Event)})
+        document.body.appendChild(Main)
+        
+        Main.appendChild(Tabs)
+        Main.appendChild(ActionDiv)
+        Main.appendChild(BuildDiv);
+        Main.appendChild(MortalDiv)
+        Main.appendChild(MaterialDiv);
+        Main.appendChild(LogDiv)
+
+        Tabs.appendChild(ActionTab);
+        Tabs.appendChild(BuildTab);
+        requestAnimationFrame(() => this.MainLoop())
+    }
+    MainLoop()
+    {
+        fpsInterval = 1000 / fps;
+        now = performance.now();
+        let elapsed = now - then;
+        
+        if (elapsed > fpsInterval)
+        {
+            then = now - (elapsed % fpsInterval);
+            this.ActionManager()
+
+            this.LoopThrough(Object.keys(ActiveActions).length,"Action")
+            this.LoopThrough(Object.keys(Mortals).length,"Mortal")
+            this.LoopThrough(Object.keys(Materials).length,"Material")
+        }
+       
+
+        requestAnimationFrame(() => this.MainLoop())
+    }
+    ActionManager()
+    {
+        this.CheckActionDatabase(ActionDatabase.length - 1)
+
+    }
+    CheckActionDatabase(NumOfLoops)
+    {
+        let CreateAction = false;
+        let CurrentAction = ActionDatabase[NumOfLoops]
+        if(ActiveActions[CurrentAction.Name] == undefined)
+        {
+            
+            CreateAction = this.CheckActionRequirements(CurrentAction.Reqs.Acts,Object.keys(CurrentAction.Reqs.Acts).length - 1);
+
+        }
+
+        if(CreateAction == true)
+        {
+            new Action(NumOfLoops)
+        }
+
+        if (NumOfLoops != 1)// end at 1
+        {
+            this.CheckActionDatabase(--NumOfLoops);
+        }
+    }
+    CheckActionRequirements(Requirements, NumOfLoops)
+    {
+        //console.log(Requirements + NumOfLoops)
+        let ActionCheck = Object.keys(Requirements)[NumOfLoops];
+        let ValueCheck = Object.values(Requirements)[NumOfLoops];
+
+        
+        
+        if(ActiveActions[ActionCheck] != undefined)
+        {
+            if (ActiveActions[ActionCheck].CurrentAmount != ValueCheck)
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false
+        }
+        
+       
+
+
+        if (NumOfLoops >= 1)// end at 0
+        {
+            this.CheckActionRequirements(Requirements,--NumOfLoops);
+        }
+        return true;
+    }
+    LoopThrough(NumOfLoops,Type)
+    {
+
+        let action =  Object.keys(ActiveActions)[NumOfLoops - 1]
+        let mortal = Object.keys(Mortals)[NumOfLoops -1 ]
+        let material = Object.keys(Materials)[NumOfLoops -1 ]
+        if (Type == "Action")
+        {
+            ActiveActions[action].UpdateHTML();
+            ActiveActions[action].Progress()
+            
+            //Object.values(ActiveActions)[NumOfLoops - 1].Progress(TickRate)
+            
+        }
+        if (Type == "Mortal")
+        {
+            Mortals[mortal].Progress()
+            Mortals[mortal].UpdateHTML()
+        }
+        if (Type == "Material")
+        {
+            Materials[material].Update();
+        }
+
+        if (NumOfLoops != 1)
+        {
+            this.LoopThrough(--NumOfLoops, Type)
+        }
+    }
+    CreateLog(Message)
+    {
+        let NewLog = document.createElement('div');
+    
+        NewLog.classList.add("LogDiv");
+    
+        let date = new Date(); 
+        NewLog.innerText = date.getHours() + ":" + date.getMinutes() + " - " + Message;
+    
+        
+    
+        if(LogDiv.children[0] == undefined)
+        {
+            //console.log(LogDiv.children[0])
+            LogDiv.appendChild(NewLog);
+        }
+        else
+        {
+            //console.log(LogDiv.children[0])
+            LogDiv.insertBefore(NewLog,LogDiv.children[0])
+            //LogDiv.appendChild(NewLog);
+        }
+    
+    
+    }
+    Onclick(event)
+    {
+        console.log(event);
+        let element = event.target;
+        if(element.id == "ActionTab")
+        {
+            ActionDiv.style.display = "block";
+            BuildDiv.style.display = "none";
+        }
+        if(element.id == "BuildTab")
+        {
+            ActionDiv.style.display = "none";
+            BuildDiv.style.display = "block";
+        }
+
+                
+
+        
+    }
+    GetElementBelow(container, y)
+    {
+        const elements = [...container.querySelectorAll('.MortalMainDiv:not(.dragging)')]
+        return elements.reduce((closestElement, currentElement) => 
+        {
+            const box = currentElement.getBoundingClientRect()
+            const offset = y - box.top - box.height / 2
+            if (offset < 0 && offset > closestElement.offset)
+            {
+                return {offset: offset, element: currentElement}
+            }
+            else 
+            {
+                return closestElement
+            }
+
+        }, {offset: Number.NEGATIVE_INFINITY}).element;
+    }
 }
 
-setUp()
+let gameData = new Game;
+
+const accumulator = {"offest": 2}
