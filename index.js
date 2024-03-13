@@ -110,20 +110,30 @@ const ActionDatabase = [
         "MaxAmount": 5,
         "Log":"",
         "Reqs":{
-            "Acts":{
+            "Acts":
+            {
                 "Never": -1
+            },
+            "Mats":
+            {
+
             }
         }
 
     },
     {
         "Name": "Wake Up",
-        "Desc":"You need to get up",
+        "Desc":"Your mind is clouded, you dont know how you got in this situation.",
         "MaxProgress":10,
         "MaxAmount": 1,
         "Log":"You push yourself up to standing position, your body aches all over",
         "Reqs":{
-            "Acts":{
+            "Acts":
+            {
+
+            },
+            "Mats":
+            {
 
             }
         }
@@ -153,9 +163,15 @@ const ActionDatabase = [
         "MaxAmount": 1,
         "Log":"Your memory is blank, but you get the feeling that the forest is very dangerous",
         "Reqs":{
-            "Acts":{
+            "Acts":
+            {
                 "Look around": 1
+            },
+            "Mats":
+            {
+
             }
+
         }
 
     },
@@ -166,8 +182,13 @@ const ActionDatabase = [
         "MaxAmount": 1,
         "Log":"You decide to stay where you are and build a shelter, but you're going to need wood",
         "Reqs":{
-            "Acts":{
+            "Acts":
+            {
                 "Try to remember": 1
+            },
+            "Mats":
+            {
+
             }
         }
 
@@ -179,20 +200,62 @@ const ActionDatabase = [
         "MaxAmount": -1,
         "Log":"You have gained 1 Stick",
         "Reqs":{
-            "Acts":{
+            "Acts":
+            {
                 "Create a plan": 1
+            },
+            "Mats":
+            {
+
             }
         }
 
     },
 ]
-const BuildDatabase = []
-//console.log(Actions[1])
+const BuildDatabase = [
+    {
+        Name: "",
+        "Desc":"",
+        "MaxProgress":100,
+        "MaxAmount": 5,
+        "Log":"",
+        "Reqs":{
+            "Acts":
+            {
+                "Never": -1
+            },
+            "Mats":
+            {
+                
+            }
+        }
+    },
+    {
+        Name: "Shelter",
+        "Desc":"",
+        "MaxProgress":100,
+        "MaxAmount": 5,
+        "Log":"",
+        "Reqs":{
+            "Acts":
+            {
+                
+            },
+            "Mats":
+            {
+                "Wood": 10
+            }
+        }
+    }
+
+]
+
 
 const Main = document.createElement('div');
 const Tabs = document.createElement('div');
 const ActionTab = document.createElement('div');
 const BuildTab = document.createElement('div');
+const OptionTab = document.createElement('div');
 const ActionDiv = document.createElement('div');
 const BuildDiv = document.createElement('div')
 const MortalDiv = document.createElement('div');
@@ -216,6 +279,7 @@ let fps = 60, now = 0, then = performance.now() ,fpsInterval, fpsCounter = 0
 let Mortals = {};
 let ActiveActions = {} ;
 let Materials = {}
+let ActiveBuildings ={};
 
 
 
@@ -228,7 +292,7 @@ function Complete(Num)
             
         break;
         case "Gather Sticks":
-            Materials["Sticks"].Amount += 1;
+            Materials["Wood"].Amount += 1;
         break;
         case 0:
             
@@ -358,7 +422,7 @@ class Mortal
     {
         if(this.MainDiv.parentElement.id == "MortalDiv" && this.CurrentStamina < this.MaxStamina)
         {
-            this.CurrentStamina += 0.1;
+            this.CurrentStamina += 5 / fps;
         }  
     }
     UpdateHTML()
@@ -448,10 +512,7 @@ class Action
         this.ActionToolTipDiv.classList.add('ActionToolTipDiv')
         this.InfoDiv.classList.add('InfoDiv')
         
-        this.InfoDiv.innerText = 
-        "Name: " + this.Stats.Name + "\n" +
-        "Description: " + this.Stats.Desc  + "\n" +
-        "Progress: " + this.CurrentProgress + "/" + this.Stats.MaxAmount;
+        
 
         this.ActionNameDiv.innerText = this.Stats.Name;
 
@@ -473,7 +534,7 @@ class Action
             {
                 let CurrentMortal = Mortals[this.MortalsHtml[x].id]
                 this.ProgressRate += CurrentMortal.Strength
-                CurrentMortal.CurrentStamina -= 5 / fps
+                CurrentMortal.CurrentStamina -= 2 / fps
             }
             if(this.CurrentProgress >= this.Stats.MaxProgress)// when actions completes once
             {
@@ -489,7 +550,12 @@ class Action
     }
     UpdateHTML()
     {
-        
+        this.InfoDiv.innerText = 
+        "Name: " + this.Stats.Name + "\n" +
+        "Description: " + this.Stats.Desc  + "\n" +
+        "Progress: " + this.CurrentProgress.toFixed(2) + "/" + this.Stats.MaxProgress + "\n" +
+        "Completed: " + this.CurrentAmount + "/" + this.Stats.MaxAmount;
+
         if (this.CurrentProgress != 0)
         {
             this.ActionProgressDiv.style.width = ((this.CurrentProgress/this.Stats.MaxProgress) * 100) + "%"
@@ -502,8 +568,7 @@ class Action
         }
         if(this.CurrentProgress >= this.Stats.MaxProgress)// when actions completes once
         {
-            gameData.CreateLog(this.Stats.Log); 
-            console.log("test");  
+            gameData.CreateLog(this.Stats.Log);  
         }
         if (this.CurrentAmount == this.Stats.MaxAmount) // when actions reached max actions
             {
@@ -577,9 +642,23 @@ class Material
 }
 class Building
 {
-    constructor()
+    MainDiv = document.createElement('div');
+    constructor(Num)
     {
-        let MainDiv = document.createElement('div');
+        this.stats = BuildDatabase[Num]
+        this.CreateHtml()
+
+
+        ActiveBuildings[this.stats.Name] = this
+    }
+    CreateHtml()
+    {
+        this.MainDiv.classList.add("BuildingMainDiv");
+
+
+
+
+        BuildDiv.appendChild(this.MainDiv);
     }
 }
 class Game
@@ -601,10 +680,8 @@ class Game
         BuildDiv.style.display = "none";
 
         new Mortal;
-        new Mortal;
-        new Mortal;
-        new Action(1)
-        new Material("Sticks")
+        //new Action(1)
+        new Material("Wood")
         
     
     
@@ -653,6 +730,7 @@ class Game
         {
             then = now - (elapsed % fpsInterval);
             this.ActionManager()
+            this.BuildingManager()
 
             this.LoopThrough(Object.keys(ActiveActions).length,"Action")
             this.LoopThrough(Object.keys(Mortals).length,"Mortal")
@@ -669,18 +747,26 @@ class Game
     }
     CheckActionDatabase(NumOfLoops)
     {
-        let CreateAction = false;
-        let CurrentAction = ActionDatabase[NumOfLoops]
+        let CreateAction = [];
+        let CurrentAction = ActionDatabase[NumOfLoops];
+
         if(ActiveActions[CurrentAction.Name] == undefined)
         {
-            
-            CreateAction = this.CheckActionRequirements(CurrentAction.Reqs.Acts,Object.keys(CurrentAction.Reqs.Acts).length - 1);
-
-        }
-
-        if(CreateAction == true)
-        {
-            new Action(NumOfLoops)
+           
+            CreateAction.push(this.CheckRequirements(CurrentAction.Reqs.Acts,Object.keys(CurrentAction.Reqs.Acts).length - 1, "Actions"));
+            if(this.CheckRequirements(CurrentAction.Reqs.Acts,Object.keys(CurrentAction.Reqs.Acts).length - 1, "Actions") == true)
+            {
+                //console.log(CurrentAction.Name + " Passed Action Check");
+            }
+            CreateAction.push(this.CheckRequirements(CurrentAction.Reqs.Mats,Object.keys(CurrentAction.Reqs.Mats).length - 1, "Materials"));
+            if(this.CheckRequirements(CurrentAction.Reqs.Mats,Object.keys(CurrentAction.Reqs.Mats).length - 1, "Materials") == true)
+            {
+                //console.log(CurrentAction.Name + " Passed Material Check");
+            }
+            if(CreateAction.includes(false) != true )
+            {
+                new Action(NumOfLoops)
+            }
         }
 
         if (NumOfLoops != 1)// end at 1
@@ -688,24 +774,87 @@ class Game
             this.CheckActionDatabase(--NumOfLoops);
         }
     }
-    CheckActionRequirements(Requirements, NumOfLoops)
+    BuildingManager()
     {
-        //console.log(Requirements + NumOfLoops)
-        let ActionCheck = Object.keys(Requirements)[NumOfLoops];
-        let ValueCheck = Object.values(Requirements)[NumOfLoops];
-
-        
-        
-        if(ActiveActions[ActionCheck] != undefined)
+        this.CheckBuildingDatabase(BuildDatabase.length - 1)
+    }
+    CheckBuildingDatabase(NumOfLoops)
+    {
+        let CreateBuilding = [];
+        let CurrentBuilding = BuildDatabase[NumOfLoops]
+        if(ActiveBuildings[CurrentBuilding.Name] == undefined)
         {
-            if (ActiveActions[ActionCheck].CurrentAmount != ValueCheck)
+            
+            CreateBuilding.push(this.CheckRequirements(CurrentBuilding.Reqs.Acts,Object.keys(CurrentBuilding.Reqs.Acts).length - 1,"Actions"));
+            if(this.CheckRequirements(CurrentBuilding.Reqs.Acts,Object.keys(CurrentBuilding.Reqs.Acts).length - 1,"Actions") == true)
             {
-                return false;
+                //console.log(CurrentBuilding.Name + " Passed Action Check");
+            }
+            CreateBuilding.push(this.CheckRequirements(CurrentBuilding.Reqs.Mats,Object.keys(CurrentBuilding.Reqs.Mats).length - 1,"Materials"));
+            if(this.CheckRequirements(CurrentBuilding.Reqs.Mats,Object.keys(CurrentBuilding.Reqs.Mats).length - 1,"Materials") == true)
+            {
+                //console.log(CurrentBuilding.Name + " Passed Material Check");
+            }
+            if(CreateBuilding.includes(false) != true)
+            {
+                
+                new Building(NumOfLoops)
             }
         }
-        else
+
+      
+
+        if (NumOfLoops != 1)// end at 1
         {
-            return false
+            this.CheckBuildingDatabase(--NumOfLoops);
+        }
+    }
+    CheckRequirements(Requirements, NumOfLoops,Type)
+    {
+        let RequirementCheck = Object.keys(Requirements)[NumOfLoops];
+        let ValueCheck = Object.values(Requirements)[NumOfLoops];
+        //console.log(NumOfLoops);
+        
+        if (Type == "Actions")
+        {
+            
+            if(ActiveActions[RequirementCheck] != undefined)
+            {
+                
+                if (ActiveActions[RequirementCheck].CurrentAmount != ValueCheck)
+                {
+                    
+                    return false;
+                }
+            }
+            else if (NumOfLoops == -1)
+            {
+                return true;
+            }
+            else
+            {
+                return false
+            }
+        }
+        if(Type == "Materials")
+        {
+            //console.log(Materials[RequirementCheck])
+            if(Materials[RequirementCheck] != undefined)
+            {
+                if(Materials[RequirementCheck].Amount <= ValueCheck)
+                {
+                    
+                    return false
+                }
+            }
+            else if (NumOfLoops == -1)
+            {
+                return true
+            }
+            else
+            {
+                return false
+            }
         }
         
        
