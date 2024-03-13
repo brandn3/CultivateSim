@@ -243,7 +243,7 @@ const BuildDatabase = [
             },
             "Mats":
             {
-                "Wood": 10
+                
             }
         }
     }
@@ -258,6 +258,7 @@ const BuildTab = document.createElement('div');
 const OptionTab = document.createElement('div');
 const ActionDiv = document.createElement('div');
 const BuildDiv = document.createElement('div')
+const OptionDiv = document.createElement('div')
 const MortalDiv = document.createElement('div');
 const MaterialDiv = document.createElement('div')
 const LogDiv = document.createElement('div');
@@ -643,22 +644,103 @@ class Material
 class Building
 {
     MainDiv = document.createElement('div');
+    BuildingMortalDiv = document.createElement("div");
+    BuildingNameDiv = document.createElement('div');
+    BuildingProgressDiv = document.createElement('div');
+    BuildingProgressTextDiv = document.createElement('div')
+
+    BuildingToolTipDiv = document.createElement("div");
+
+    Stats;
+    CurrentAmount = 0;
+    Hidden = false;
+    CurrentProgress = 0;
+    ProgressRate = 0.1;
+
     constructor(Num)
     {
-        this.stats = BuildDatabase[Num]
+        this.Stats = BuildDatabase[Num]
         this.CreateHtml()
 
+        this.BuildingMortalDiv.addEventListener("dragover", ()=>{
+            this.BuildingMortalDiv.appendChild(currentlydragging);
+            
+        })
 
-        ActiveBuildings[this.stats.Name] = this
+        ActiveBuildings[this.Stats.Name] = this
     }
     CreateHtml()
     {
         this.MainDiv.classList.add("BuildingMainDiv");
+        this.BuildingMortalDiv.classList.add("BuildingMortalDiv");
+        this.BuildingNameDiv.classList.add("BuildingNameDiv");
+        this.BuildingProgressDiv.classList.add("BuildingProgressDiv");
+        this.BuildingProgressTextDiv.classList.add("BuildingProgressTextDiv");
 
+        this.BuildingNameDiv.innerText = this.Stats.Name
+        this.BuildingProgressTextDiv.innerText = "0/100"
 
-
+        this.MainDiv.appendChild(this.BuildingNameDiv);
+        this.MainDiv.appendChild(this.BuildingMortalDiv);
+        this.MainDiv.appendChild(this.BuildingProgressDiv);
+        this.MainDiv.appendChild(this.BuildingProgressTextDiv);
+        
 
         BuildDiv.appendChild(this.MainDiv);
+    }
+    Progress()
+    {
+        if ( this.Hidden == false)
+        {
+            this.MortalsHtml = this.BuildingMortalDiv.children;
+            for (let x = 0; x < this.MortalsHtml.length; x++)// sets progress rate of Action based off mortals working on it.
+            {
+                let CurrentMortal = Mortals[this.MortalsHtml[x].id]
+                this.ProgressRate += CurrentMortal.Strength
+                CurrentMortal.CurrentStamina -= 2 / fps
+            }
+            if(this.CurrentProgress >= this.Stats.MaxProgress)// when actions completes once
+            {
+                
+                Complete(this.Stats.Name);
+                this.CurrentProgress = 0;
+                this.CurrentAmount += 1;
+            }
+            this.CurrentProgress += this.ProgressRate / fps // increments Action Progress
+        }
+       
+        this.ProgressRate = 0;
+    }
+    UpdateHTML()
+    {
+        if (this.CurrentProgress != 0)
+        {
+            this.BuildingProgressDiv.style.width = ((this.CurrentProgress/this.Stats.MaxProgress) * 70) + "%"
+            this.BuildingProgressTextDiv.innerText = this.CurrentProgress.toFixed(1) + "/" + this.Stats.MaxProgress + " (" + (((this.CurrentProgress/this.Stats.MaxProgress) * 100).toFixed(1) + "%") + ")"
+            
+        }
+        else
+        {
+            this.BuildingProgressDiv.style.width = "0%"
+        }
+        if(this.CurrentProgress >= this.Stats.MaxProgress)// when Buildings completes once
+        {
+            gameData.CreateLog(this.Stats.Log);  
+        }
+        if (this.CurrentAmount == this.Stats.MaxAmount) // when Buildings reached max Buildings
+            {
+                
+                this.Hidden = true;
+                for(let x = 0; x < this.MortalsHtml.length; x++)
+                {
+                    MortalDiv.appendChild(this.MortalsHtml[x])
+                }
+            } 
+        if(this.Hidden == true)
+        {
+            
+            this.MainDiv.style.display = "none";
+        }
     }
 }
 class Game
@@ -671,13 +753,18 @@ class Game
         ActionTab.classList.add("Button");
         BuildTab.setAttribute('id', "BuildTab");
         BuildTab.classList.add("Button")
+        OptionTab.setAttribute('id',"OptionTab" );
+        OptionTab.classList.add("Button")
         ActionDiv.setAttribute("id", "ActionDiv");
-        BuildDiv.setAttribute('id', "BuildDiv")
+        BuildDiv.setAttribute('id', "BuildDiv");
+        OptionDiv.setAttribute('id', 'OptionDiv');
         MortalDiv.setAttribute("id", "MortalDiv");
         MaterialDiv.setAttribute("id", "MaterialDiv");
         LogDiv.setAttribute("id", "LogDiv");
         ActionDiv.style.display = "block";
         BuildDiv.style.display = "none";
+        OptionDiv.style.display = 'none';
+
 
         new Mortal;
         //new Action(1)
@@ -705,6 +792,7 @@ class Game
     
         ActionTab.innerText = "Actions"
         BuildTab.innerText = "Build"
+        OptionTab.innerText = "Options"
 
         document.addEventListener("click", (Event) => {this.Onclick(Event)})
         document.body.appendChild(Main)
@@ -712,12 +800,14 @@ class Game
         Main.appendChild(Tabs)
         Main.appendChild(ActionDiv)
         Main.appendChild(BuildDiv);
+        Main.appendChild(OptionDiv);
         Main.appendChild(MortalDiv)
         Main.appendChild(MaterialDiv);
         Main.appendChild(LogDiv)
 
         Tabs.appendChild(ActionTab);
         Tabs.appendChild(BuildTab);
+        Tabs.appendChild(OptionTab)
         requestAnimationFrame(() => this.MainLoop())
     }
     MainLoop()
@@ -735,6 +825,7 @@ class Game
             this.LoopThrough(Object.keys(ActiveActions).length,"Action")
             this.LoopThrough(Object.keys(Mortals).length,"Mortal")
             this.LoopThrough(Object.keys(Materials).length,"Material")
+            this.LoopThrough(Object.keys(ActiveBuildings).length, "Building")
         }
        
 
@@ -870,8 +961,9 @@ class Game
     {
 
         let action =  Object.keys(ActiveActions)[NumOfLoops - 1]
-        let mortal = Object.keys(Mortals)[NumOfLoops -1 ]
-        let material = Object.keys(Materials)[NumOfLoops -1 ]
+        let mortal = Object.keys(Mortals)[NumOfLoops -1]
+        let material = Object.keys(Materials)[NumOfLoops -1] 
+        let Building = Object.keys(ActiveBuildings)[NumOfLoops -1]
         if (Type == "Action")
         {
             ActiveActions[action].UpdateHTML();
@@ -889,7 +981,11 @@ class Game
         {
             Materials[material].Update();
         }
-
+        if (Type == "Building")
+        {
+            ActiveBuildings[Building].Progress()
+            ActiveBuildings[Building].UpdateHTML()
+        }
         if (NumOfLoops != 1)
         {
             this.LoopThrough(--NumOfLoops, Type)
@@ -922,17 +1018,25 @@ class Game
     }
     Onclick(event)
     {
-        console.log(event);
+        //console.log(event);
         let element = event.target;
         if(element.id == "ActionTab")
         {
             ActionDiv.style.display = "block";
             BuildDiv.style.display = "none";
+            OptionDiv.style.display = "none"
         }
         if(element.id == "BuildTab")
         {
             ActionDiv.style.display = "none";
             BuildDiv.style.display = "block";
+            OptionDiv.style.display = "none"
+        }
+        if(element.id == "OptionTab")
+        {
+            ActionDiv.style.display = "none";
+            BuildDiv.style.display = "none";
+            OptionDiv.style.display = "block"
         }
 
                 
