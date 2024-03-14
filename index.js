@@ -243,7 +243,7 @@ const BuildDatabase = [
             },
             "Mats":
             {
-               Wood: 10 
+               "Wood": 10 
             }
         }
     }
@@ -822,10 +822,10 @@ class Game
             this.ActionManager()
             this.BuildingManager()
 
-            this.LoopThrough(Object.keys(ActiveActions).length,"Action")
-            this.LoopThrough(Object.keys(Mortals).length,"Mortal")
-            this.LoopThrough(Object.keys(Materials).length,"Material")
-            this.LoopThrough(Object.keys(ActiveBuildings).length, "Building")
+            this.LoopThrough(Object.keys(ActiveActions).length - 1,"Action")
+            this.LoopThrough(Object.keys(Mortals).length - 1,"Mortal")
+            this.LoopThrough(Object.keys(Materials).length - 1,"Material")
+            this.LoopThrough(Object.keys(ActiveBuildings).length - 1, "Building")
         }
        
 
@@ -960,33 +960,35 @@ class Game
     LoopThrough(NumOfLoops,Type)
     {
 
-        let action =  Object.keys(ActiveActions)[NumOfLoops - 1]
-        let mortal = Object.keys(Mortals)[NumOfLoops -1]
-        let material = Object.keys(Materials)[NumOfLoops -1] 
-        let Building = Object.keys(ActiveBuildings)[NumOfLoops -1]
+        let action =  Object.keys(ActiveActions)[NumOfLoops]
+        let mortal = Object.keys(Mortals)[NumOfLoops]
+        let material = Object.keys(Materials)[NumOfLoops] 
+        let Building = Object.keys(ActiveBuildings)[NumOfLoops]
         if (Type == "Action")
         {
+            
             ActiveActions[action].UpdateHTML();
             ActiveActions[action].Progress()
-            
+            console.log(NumOfLoops)
             //Object.values(ActiveActions)[NumOfLoops - 1].Progress(TickRate)
             
         }
-        if (Type == "Mortal")
+        if (Type == "Mortal" && mortal != undefined)
         {
             Mortals[mortal].Progress()
             Mortals[mortal].UpdateHTML()
         }
-        if (Type == "Material")
+        if (Type == "Material" && action != undefined)
         {
             Materials[material].Update();
         }
-        if (Type == "Building")
+        if (Type == "Building" && Building != undefined)
         {
+            
             ActiveBuildings[Building].Progress()
             ActiveBuildings[Building].UpdateHTML()
         }
-        if (NumOfLoops != 1)
+        if (NumOfLoops > 0 )
         {
             this.LoopThrough(--NumOfLoops, Type)
         }
