@@ -150,14 +150,14 @@ const ActionDatabase = [
     {
         Name: "Wake Up",
         Description:"",
-        MaxProgress:10,
+        MaxProgress:5,
         Stat: "Endurence",
         Log:"",
         Requirements:
         {
             Actions:
             {
-                
+                Never: -1
             },
             Materials:
             {
@@ -194,7 +194,7 @@ const ActionDatabase = [
     {
         Name: "Pick Yourself Up",
         Description:"",
-        MaxProgress:10,
+        MaxProgress:5,
         Stat: "Strength",
         Log:"",
         Requirements:
@@ -238,7 +238,7 @@ const ActionDatabase = [
     {
         Name: "Look Around",
         Description:"",
-        MaxProgress:10,
+        MaxProgress:5,
         Stat: "Perception",
         Log:"",
         Requirements:
@@ -282,7 +282,7 @@ const ActionDatabase = [
     {
         Name: "Think Of A Plan",
         Description:"",
-        MaxProgress:10,
+        MaxProgress:5,
         Stat: "Inteligence",
         Log:"",
         Requirements:
@@ -328,12 +328,12 @@ const ActionDatabase = [
         Description:"",
         MaxProgress:5,
         Stat: "Perception",
-        Log:"",
+        Log:" ",
         Requirements:
         {
             Actions:
             {
-                "Think Of A Plan": 1
+                
             },
             Materials:
             {
@@ -430,7 +430,7 @@ const BuildingDatabase = [
             },
             Materials:
             {
-                Wood: 10
+                Wood: 1
             },
             Buildings:
             {
@@ -456,7 +456,7 @@ const BuildingDatabase = [
             },
             Materials:
             {
-
+                Wood: 25
             }
         }
     },
@@ -480,7 +480,7 @@ const LogDiv = document.createElement('div');
 let TimerName;
 let Start = 0;
 let End = 0;
-
+let RepeatNum = 1;
 
 let CurrentTicks = 0;
 
@@ -547,7 +547,6 @@ class Mortal
 
     constructor()
     {
-        console.log(typeof this.Endurence)
         Mortals[this.Name] = this;
         this.CreateHtml()
         this.MainDiv.addEventListener("dragstart", e => {
@@ -569,13 +568,18 @@ class Mortal
     CreateHtml()
     {
         this.MainDiv.classList.add("MortalMainDiv");
+        this.MainDiv.classList.add("Border")
         this.NameDiv.classList.add("MortalNameDiv");
+        this.NameDiv.classList.add("Border")
         this.InformationDiv.classList.add("MortalInformationDiv");
-        this.InformationDiv.classList.add("Button")
+        this.InformationDiv.classList.add("Border")
+        //this.InformationDiv.classList.add("Button")
         this.StaminaDiv.classList.add("MortalStaminaDiv");
+        this.StaminaDiv.classList.add("Border")
         this.StaminaBarDiv.classList.add("MortalStaminaBarDiv")
 
         this.InformationToolTipDiv.classList.add("InformationToolTipDiv")
+        this.InformationToolTipDiv.classList.add("Border")
         this.InfoDiv.classList.add("InfoDiv");
         this.StatDiv.classList.add("StatDiv");
         this.SkillDiv.classList.add("SkillDiv");
@@ -666,14 +670,12 @@ class Action
     ActionToolTipDiv = document.createElement("div");
     InfoDiv = document.createElement("div")
 
-    //ToolTipDiv = document.createElement("")
 
     ActiveWorkers = [];
-    MortalsHtml;
-
     Stats;
 
     Num;
+    DoCompletion = false
     Completed = 0;
     Amount = 0;
     Hidden = false;
@@ -682,16 +684,15 @@ class Action
 
     constructor(Num)
     {
-        if(Num == 1)
+        if(Num == 5)
         {
-            this.Amount += 1;
-            //console.log(this.Amount)
+            //this.Amount += 1;
+            this.Amount = -1
         }
         this.Stats = ActionDatabase[Num]
         this.Num = Num
 
         this.CreateHtml();
-        
         this.ActionMortalDiv.addEventListener("dragover", ()=>{
             this.ActionMortalDiv.appendChild(currentlydragging);
             
@@ -707,12 +708,17 @@ class Action
     {
 
         this.MainDiv.classList.add("ActionMainDiv");
+        this.MainDiv.classList.add("Border")
         this.ActionMortalDiv.classList.add("ActionMortalDiv");
+        this.ActionMortalDiv.classList.add("Border")
         this.ActionNameDiv.classList.add("ActionNameDiv")
+        this.ActionNameDiv.classList.add("Border")
         this.ActionProgressDiv.classList.add("ActionProgressDiv")
+        this.ActionProgressDiv.classList.add("Border")
         this.ActionProgressTextDiv.classList.add("ActionProgressTextDiv")
 
         this.ActionToolTipDiv.classList.add('ActionToolTipDiv')
+        this.ActionToolTipDiv.classList.add("Border")
         this.InfoDiv.classList.add('InfoDiv')
         
         
@@ -730,40 +736,37 @@ class Action
     }
     Progress()
     {
+        
+        if( this.DoCompletion == true)
+            {
+                this.Completion()
+                this.DoCompletion = false;
+            }
+        
         if ( this.Hidden == false)
         {
-            this.ProgressRate = 0;
-            this.MortalsHtml = this.ActionMortalDiv.children;
             
-            for (let x = 0; x < this.MortalsHtml.length; x++)// sets progress rate of Action based off mortals working on it.
+            this.ProgressRate = 0;
+            
+
+            for (let x = 0; x < this.ActionMortalDiv.children.length; x++)// sets progress rate of Action based off mortals working on it.
             {
-                let CurrentMortal = Mortals[this.MortalsHtml[x].id]
-                //console.log(1 + (this.logEffectiveness(CurrentMortal[this.Stats.Stat] ) * 0.2))
-                this.ProgressRate += 1 + (this.logEffectiveness(CurrentMortal[this.Stats.Stat]) * 0.2)
-                CurrentMortal.CurrentStamina -= 2 / fps
+                this.ActiveWorkers[x] = (Mortals[this.ActionMortalDiv.children[x].id])
+                this.ProgressRate += 1 + (this.logEffectiveness(this.ActiveWorkers[x][this.Stats.Stat]) * 0.2)
+               // CurrentMortal.CurrentStamina -= 2 / fps
             }
+            
             if(this.CurrentProgress >= this.Stats.MaxProgress)// when actions completes once
             {
                 if ( this.Amount != -1)
                 {
                     this.Amount -= 1;
                 }
-                let CurrentMortal = Mortals[this.MortalsHtml[0].id]
+                
                 
                 this.Completed += 1;
-                gameData.CheckDatabase(ActionDatabase.length - 1, "Action");
-               // console.log(Object.keys(this.Stats.Completion.Actions).length)
-                for(let x = 0; x < Object.keys(this.Stats.Completion.Actions).length; x++)
-                {
-                    //console.log(Object.keys(this.Stats.Completion.Actions)[x])
-                    ActiveActions[Object.keys(this.Stats.Completion.Actions)[x]].Amount += this.Stats.Completion.Actions[Object.keys(this.Stats.Completion.Actions)[x]]
-                }
-                for(let x = 0; x < Object.keys(this.Stats.Completion.Materials).length; x++)
-                {
-                    
-                    //console.log(Object.keys(this.Stats.Completion.Actions)[x])
-                        Materials[Object.keys(this.Stats.Completion.Materials)[x]].Amount += ((this.Stats.Completion.Materials[Object.keys(this.Stats.Completion.Materials)[x]]) * this.logEffectiveness(CurrentMortal[this.Stats.Stat]))
-                }
+                this.DoCompletion = true;
+                
                 this.CurrentProgress = 0;
 
             }
@@ -772,17 +775,33 @@ class Action
        
         
     }
+    Completion()
+    {
+        let MaterialGain = 0;
+        for(let x = 0; x < this.ActiveWorkers.length; x++)
+        {
+            MaterialGain += ((this.Stats.Completion.Materials[Object.keys(this.Stats.Completion.Materials)[x]]) * this.logEffectiveness(this.ActiveWorkers[x][this.Stats.Stat]))
+        }
+
+        for(let x = 0; x < Object.keys(this.Stats.Completion.Actions).length; x++)
+        {
+            ActiveActions[Object.keys(this.Stats.Completion.Actions)[x]].Amount += this.Stats.Completion.Actions[Object.keys(this.Stats.Completion.Actions)[x]]
+        }
+        for(let x = 0; x < Object.keys(this.Stats.Completion.Materials).length; x++)
+        {          
+            Materials[Object.keys(this.Stats.Completion.Materials)[x]].Amount += MaterialGain    
+            gameData.CreateLog("You have Gained " + MaterialGain.toFixed(2) + " " + Object.keys(this.Stats.Completion.Materials)[x])         
+        }
+        
+    }
     UpdateHTML()
     {
         if (this.Hidden == false)
         {
             let TimeTillEnd = this.Stats.MaxProgress / this.ProgressRate - (this.Stats.MaxProgress / this.ProgressRate) * (this.CurrentProgress / this.Stats.MaxProgress)
-            //console.log(TimeTillEnd)
             if (isNaN(TimeTillEnd))
             {
-                
                 TimeTillEnd = 0;
-               // console.log(TimeTillEnd)
             }
             this.MortalsHtml = this.ActionMortalDiv.children;
             this.InfoDiv.innerText = 
@@ -807,23 +826,35 @@ class Action
             }
             if(this.CurrentProgress >= this.Stats.MaxProgress)// when actions completes once
             {
-                gameData.CreateLog(this.Stats.Log);  
+                if(this.Stats.log != undefined)
+                {
+                    gameData.CreateLog(this.Stats.Log); 
+                }
+                 
             }
             if (this.Amount == 0) // when actions reached max actions
+            {
+                this.Hidden = true;
+                for(let x = 0; x < this.MortalsHtml.length; x++)
                 {
-                    
-
-                    this.Hidden = true;
-                    for(let x = 0; x < this.MortalsHtml.length; x++)
-                    {
                         MortalDiv.appendChild(this.MortalsHtml[x])
-                    }
-                } 
+                }
+            }
+           
             if(this.Hidden == true)
             {
                 
                 this.MainDiv.style.display = "none";
             }
+            else
+            {
+                this.MainDiv.style.display = "block";
+            }
+        }
+        if (this.Amount != 0) // when actions reached max actions
+        {
+
+            this.Hidden = false;
         }
     }
     ShowToolTip(event)
@@ -876,6 +907,7 @@ class Material
     CreateHtml()
     {
         this.MainDiv.setAttribute("id",this.Name);
+        this.MainDiv.classList.add("Border")
         this.NameDiv.classList.add("MaterialNameDiv")
         this.AmountDiv.classList.add("MaterialAmountDiv")
 
@@ -904,9 +936,9 @@ class Building
 
     BuildingToolTipDiv = document.createElement("div");
 
+    ActiveWorkers = []
     Stats;
     Level = 0;
-    CurrentAmount = 0;
     Hidden = false;
     CurrentProgress = 0;
     ProgressRate = 0.1;
@@ -926,9 +958,13 @@ class Building
     CreateHtml()
     {
         this.MainDiv.classList.add("BuildingMainDiv");
+        this.MainDiv.classList.add("Border")
         this.BuildingMortalDiv.classList.add("BuildingMortalDiv");
+        this.BuildingMortalDiv.classList.add("Border")
         this.BuildingNameDiv.classList.add("BuildingNameDiv");
+        this.BuildingNameDiv.classList.add("Border")
         this.BuildingProgressDiv.classList.add("BuildingProgressDiv");
+        this.BuildingProgressDiv.classList.add("Border")
         this.BuildingProgressTextDiv.classList.add("BuildingProgressTextDiv");
 
         this.BuildingNameDiv.innerText = this.Stats.Name
@@ -944,13 +980,13 @@ class Building
     }
     Progress()
     {
-        if ( this.Hidden == false)
+        if (this.Hidden == false)
         {
-            this.MortalsHtml = this.BuildingMortalDiv.children;
-            for (let x = 0; x < this.MortalsHtml.length; x++)// sets progress rate of Action based off mortals working on it.
+            
+            for (let x = 0; x < this.BuildingMortalDiv.children.length; x++)// sets progress rate of Action based off mortals working on it.
             {
-                let CurrentMortal = Mortals[this.MortalsHtml[x].id]
-                this.ProgressRate += CurrentMortal.Strength
+                this.ActiveWorkers[x] = Mortals[this.BuildingMortalDiv.children[x].id]
+                this.ProgressRate += 1 + (this.logEffectiveness(this.ActiveWorkers[x][this.Stats.Stat]) * 0.2)
                 CurrentMortal.CurrentStamina -= 2 / fps
             }
             if(this.CurrentProgress >= this.Stats.MaxProgress)// when actions completes once
@@ -958,7 +994,7 @@ class Building
                 
                 Complete(this.Stats.Name);
                 this.CurrentProgress = 0;
-                this.CurrentAmount += 1;
+                
             }
             this.CurrentProgress += this.ProgressRate / fps // increments Action Progress
         }
@@ -981,19 +1017,23 @@ class Building
         {
             gameData.CreateLog(this.Stats.Log);  
         }
-        if (this.CurrentAmount == this.Stats.MaxAmount) // when Buildings reached max Buildings
-            {
-                
-                this.Hidden = true;
-                for(let x = 0; x < this.MortalsHtml.length; x++)
-                {
-                    MortalDiv.appendChild(this.MortalsHtml[x])
-                }
-            } 
         if(this.Hidden == true)
         {
             
             this.MainDiv.style.display = "none";
+        }
+    }
+    logEffectiveness(stat) {
+        if (stat < 10.01)// 0 = 1 = 
+        {
+            let scale = 2
+            let shift = 1
+            let base = 5
+            return (scale * Math.log(stat + shift) / Math.log(base)) + 1;
+        }
+        if (stat > 10 && stat < 50)
+        {
+            
         }
     }
 }
@@ -1002,19 +1042,30 @@ class Game
     constructor()
     {
         Main.setAttribute("id", "Main");
+        Main.classList.add("Border")
         Tabs.setAttribute("id", "Tabs");
+        Tabs.classList.add("Border")
         ActionTab.setAttribute('id', "ActionTab");
         ActionTab.classList.add("Button");
+        ActionTab.classList.add("Border")
         BuildTab.setAttribute('id', "BuildTab");
         BuildTab.classList.add("Button")
+        BuildTab.classList.add("Border")
         OptionTab.setAttribute('id',"OptionTab" );
         OptionTab.classList.add("Button")
+        OptionTab.classList.add("Border")
         ActionDiv.setAttribute("id", "ActionDiv");
+        ActionDiv.classList.add("Border")
         BuildDiv.setAttribute('id', "BuildDiv");
+        BuildDiv.classList.add("Border")
         OptionDiv.setAttribute('id', 'OptionDiv');
+        OptionDiv.classList.add("Border")
         MortalDiv.setAttribute("id", "MortalDiv");
+        MortalDiv.classList.add("Border")
         MaterialDiv.setAttribute("id", "MaterialDiv");
+        MaterialDiv.classList.add("Border")
         LogDiv.setAttribute("id", "LogDiv");
+        LogDiv.classList.add("Border")
         ActionDiv.style.display = "block";
         BuildDiv.style.display = "none";
         OptionDiv.style.display = 'none';
@@ -1225,7 +1276,8 @@ class Game
         let mortal = Object.keys(Mortals)[NumOfLoops]
         let material = Object.keys(Materials)[NumOfLoops] 
         let Building = Object.keys(ActiveBuildings)[NumOfLoops]
-        if (Type == "Action")
+        //console.log(ActiveActions)
+        if (Type == "Action" && action != undefined)
         {
             
             ActiveActions[action].UpdateHTML();
@@ -1255,37 +1307,65 @@ class Game
         }
     }
     CreateLog(Message)
-    {
-        let NewLog = document.createElement('div');
-        NewLog.classList.add("LogDiv");
-    
+    { 
         const now = new Date();
         let hours = now.getHours();
         let minutes = now.getMinutes();
         let seconds = now.getSeconds();
-
-        // Ensure two-digit formatting for hours, minutes, and seconds
         hours = hours < 10 ? '0' + hours : hours;
         minutes = minutes < 10 ? '0' + minutes : minutes;
         seconds = seconds < 10 ? '0' + seconds : seconds;
+        let DateText = `${hours}:${minutes}:${seconds}` + " - ";
 
-        
-        NewLog.innerText = `${hours}:${minutes}:${seconds}` + " - " + Message;
-    
-        
-    
-        if(LogDiv.children[0] == undefined)
-        {
-            //console.log(LogDiv.children[0])
-            LogDiv.appendChild(NewLog);
-        }
+        if(LogDiv.children[0] != undefined && LogDiv.children[0].querySelector(".MessageDiv").innerText == Message )
+            {
+                LogDiv.children[0].querySelector(".DateDiv").innerText = DateText
+                LogDiv.children[0].querySelector(".RepeatDiv").innerText = "(" + ++RepeatNum + "x)"
+            }
         else
         {
-            //console.log(LogDiv.children[0])
-            LogDiv.insertBefore(NewLog,LogDiv.children[0])
-            //LogDiv.appendChild(NewLog);
-        }
+            let NewLog = document.createElement('div');
+            let DateDiv = document.createElement('div');
+            let MessageDiv = document.createElement('div');
+            let RepeatDiv = document.createElement('div')
+            NewLog.classList.add("LogDiv");
+            DateDiv.classList.add("DateDiv")
+            MessageDiv.classList.add("MessageDiv");
+            RepeatDiv.classList.add("RepeatDiv");
+            
+            MessageDiv.innerText = Message
+            DateDiv.innerText = DateText
+        
+            NewLog.appendChild(DateDiv);
+            NewLog.appendChild(MessageDiv);
+            NewLog.appendChild(RepeatDiv); 
+            
+            
+            if(LogDiv.children[0] == undefined)
+            {
+                LogDiv.appendChild(NewLog);
+            }
+            else
+            {
+                
+                LogDiv.insertBefore(NewLog,LogDiv.children[0])
+                RepeatNum = 1;
+                
+            }
     
+        }
+        
+    
+       
+
+
+        
+
+        
+        
+        
+        
+       
     
     }
     Onclick(event)
@@ -1351,13 +1431,13 @@ class Game
 
 let gameData = new Game;
 
-        console.log("stat 0 = " +  gameData.logEffectiveness(0));
-        console.log("stat 1 = " +  gameData.logEffectiveness(1));
-        console.log("stat 2 = " +  gameData.logEffectiveness(2));
-        console.log("stat 4 = " +  gameData.logEffectiveness(4));
-        console.log("stat 6 = " +  gameData.logEffectiveness(6));
-        console.log("stat 8 = " +  gameData.logEffectiveness(8));
-        console.log("stat 10 = " +  gameData.logEffectiveness(10));
+        // console.log("stat 0 = " +  gameData.logEffectiveness(0));
+        // console.log("stat 1 = " +  gameData.logEffectiveness(1));
+        // console.log("stat 2 = " +  gameData.logEffectiveness(2));
+        // console.log("stat 4 = " +  gameData.logEffectiveness(4));
+        // console.log("stat 6 = " +  gameData.logEffectiveness(6));
+        // console.log("stat 8 = " +  gameData.logEffectiveness(8));
+        // console.log("stat 10 = " +  gameData.logEffectiveness(10));
 
         // console.log("stat 10 = " + gameData.logEffectiveness(10));
         // console.log("stat 50 = " + gameData.logEffectiveness(50));
