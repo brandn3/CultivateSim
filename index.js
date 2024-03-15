@@ -105,148 +105,361 @@ const Names = [
 const ActionDatabase = [
     {
         Name: "",
-        "Desc":"",
-        "MaxProgress":100,
-        "MaxAmount": 5,
-        "Log":"",
-        "Reqs":{
-            "Acts":
+        Description:"",
+        MaxProgress:100,
+        Stat: "",
+        Log:"",
+        Requirements:
+        {
+            Actions:
             {
-                "Never": -1
+                Never: -1
             },
-            "Mats":
+            Materials:
+            {
+
+            },
+            Buildings:
             {
 
             }
-        }
-
-    },
-    {
-        "Name": "Wake Up",
-        "Desc":"Your mind is clouded, you dont know how you got in this situation.",
-        "MaxProgress":10,
-        "MaxAmount": 1,
-        "Log":"You push yourself up to standing position, your body aches all over",
-        "Reqs":{
-            "Acts":
-            {
-
-            },
-            "Mats":
-            {
-
-            }
-        }
-
-    },
-    {
-        "Name": "Look around",
-        "Desc":"Observe your surroundings",
-        "MaxProgress":10,
-        "MaxAmount": 1,
-        "Log":"You're in a forest, the trees are fairly thin and the leaves are abundant",
-        "Reqs":{
-            "Acts":{
-                "Wake Up": 1
-            },
-            "Mats":
-            {
-
-            }
-        }
-
-    },
-    {
-        "Name": "Try to remember",
-        "Desc":"You dont know where you are, try to retrace your steps",
-        "MaxProgress":10,
-        "MaxAmount": 1,
-        "Log":"Your memory is blank, but you get the feeling that the forest is very dangerous",
-        "Reqs":{
-            "Acts":
-            {
-                "Look around": 1
-            },
-            "Mats":
-            {
-
-            }
-
-        }
-
-    },
-    {
-        "Name": "Create a plan",
-        "Desc":"You are going to need to keep yourself save, try to think of what to do next",
-        "MaxProgress":10,
-        "MaxAmount": 1,
-        "Log":"You decide to stay where you are and build a shelter, but you're going to need wood",
-        "Reqs":{
-            "Acts":
-            {
-                "Try to remember": 1
-            },
-            "Mats":
-            {
-
-            }
-        }
-
-    },
-    {
-        "Name": "Gather Sticks",
-        "Desc":"Sticks are abundant, covering every peice of grass",
-        "MaxProgress":5,
-        "MaxAmount": -1,
-        "Log":"You have gained 1 Stick",
-        "Reqs":{
-            "Acts":
-            {
-                "Create a plan": 1
-            },
-            "Mats":
-            {
-
-            }
-        }
-
-    },
-]
-const BuildDatabase = [
-    {
-        Name: "",
-        "Desc":"",
-        "MaxProgress":100,
-        "MaxAmount": 5,
-        "Log":"",
-        "Reqs":{
-            "Acts":
-            {
-                "Never": -1
-            },
-            "Mats":
+        },
+        Completion:
+        {
+            Actions:
             {
                 
+            },
+            Materials:
+            {
+
+            }
+        },
+        Cost: //per completion
+        {
+            Actions:
+            {
+                
+            },
+            Materials:
+            {
+
+            }
+        }
+    },
+    {
+        Name: "Wake Up",
+        Description:"",
+        MaxProgress:10,
+        Stat: "Endurence",
+        Log:"",
+        Requirements:
+        {
+            Actions:
+            {
+                
+            },
+            Materials:
+            {
+
+            },
+            Buildings:
+            {
+                
+            }
+        },
+        Completion:
+        {
+            Actions:
+            {
+                "Pick Yourself Up": 1
+            },
+            Materials:
+            {
+                
+            }
+        },
+        Cost://per completion
+        {
+            Actions:
+            {
+                
+            },
+            Materials:
+            {
+
+            }
+        }
+    },
+    {
+        Name: "Pick Yourself Up",
+        Description:"",
+        MaxProgress:10,
+        Stat: "Strength",
+        Log:"",
+        Requirements:
+        {
+            Actions:
+            {
+                "Wake Up": 1
+            },
+            Materials:
+            {
+
+            },
+            Buildings:
+            {
+                
+            }
+        },
+        Completion:
+        {
+            Actions:
+            {
+                "Look Around": 1
+            },
+            Materials:
+            {
+                
+            }
+        },
+        Cost://per completion
+        {
+            Actions:
+            {
+                
+            },
+            Materials:
+            {
+
+            }
+        }
+    },
+    {
+        Name: "Look Around",
+        Description:"",
+        MaxProgress:10,
+        Stat: "Perception",
+        Log:"",
+        Requirements:
+        {
+            Actions:
+            {
+                "Pick Yourself Up": 1
+            },
+            Materials:
+            {
+
+            },
+            Buildings:
+            {
+                
+            }
+        },
+        Completion:
+        {
+            Actions:
+            {
+                "Think Of A Plan": 1
+            },
+            Materials:
+            {
+
+            }
+        },
+        Cost: //per completion
+        {
+            Actions:
+            {
+                
+            },
+            Materials:
+            {
+
+            }
+        }
+    },
+    {
+        Name: "Think Of A Plan",
+        Description:"",
+        MaxProgress:10,
+        Stat: "Inteligence",
+        Log:"",
+        Requirements:
+        {
+            Actions:
+            {
+                "Look Around": 1
+            },
+            Materials:
+            {
+
+            },
+            Buildings:
+            {
+                
+            }
+        },
+        Completion:
+        {
+            Actions:
+            {
+                "Gather Wood": -1
+            },
+            Materials:
+            {
+
+            }
+        },
+        Cost: //per completion
+        {
+            Actions:
+            {
+                
+            },
+            Materials:
+            {
+
+            }
+        }
+    },
+    {
+        Name: "Gather Wood",
+        Description:"",
+        MaxProgress:5,
+        Stat: "Perception",
+        Log:"",
+        Requirements:
+        {
+            Actions:
+            {
+                "Think Of A Plan": 1
+            },
+            Materials:
+            {
+
+            },
+            Buildings:
+            {
+                
+            }
+        },
+        Completion:
+        {
+            Actions:
+            {
+                
+            },
+            Materials:
+            {
+                Wood: 1
+            }
+        },
+        Cost: //per completion
+        {
+            Actions:
+            {
+                
+            },
+            Materials:
+            {
+
+            }
+        }
+    },
+    
+]
+const BuildingDatabase = [
+    {
+        Name: "",
+        Description:"",
+        MaxProgress:100,
+        MaxAmount: 5,
+        Stat: "",
+        Log:"",
+        Requirements:
+        {
+            Actions:
+            {
+                Never: -1
+            },
+            Materials:
+            {
+
+            },
+            Buildings:
+            {
+                
+            }
+        },
+        Completion:
+        {
+            Actions:
+            {
+                
+            },
+            Materials:
+            {
+
+            }
+        },
+        Cost: //per completion
+        {
+            Actions:
+            {
+                
+            },
+            Materials:
+            {
+
             }
         }
     },
     {
         Name: "Shelter",
-        "Desc":"",
-        "MaxProgress":100,
-        "MaxAmount": 5,
-        "Log":"",
-        "Reqs":{
-            "Acts":
+        Description:"",
+        MaxProgress:100,
+        MaxAmount: 5,
+        Stat: "",
+        Log:"",
+        Requirements:
+        {
+            Actions:
             {
                 
             },
-            "Mats":
+            Materials:
             {
-               "Wood": 10 
+                Wood: 10
+            },
+            Buildings:
+            {
+                
+            }
+        },
+        Completion:
+        {
+            Actions:
+            {
+                
+            },
+            Materials:
+            {
+
+            }
+        },
+        Cost: //per completion
+        {
+            Actions:
+            {
+                
+            },
+            Materials:
+            {
+
             }
         }
-    }
+    },
 
 ]
 
@@ -282,35 +495,9 @@ let ActiveActions = {} ;
 let Materials = {}
 let ActiveBuildings ={};
 
-
-
-function Complete(Num)
-{
-    
-    switch(Num)
-    {
-        case 1:
-            
-        break;
-        case "Gather Sticks":
-            Materials["Wood"].Amount += 1;
-        break;
-        case 0:
-            
-        break;
-        case 0:
-            
-        break;
-        
-    }
-    
-}
-
-
 function getRandomArbitrary(min, max) {
-    return Math.random() * (max - min) + min;
+    return  Math.random() * (max - min) + min;
 }
-
 function StartTime(Name)
 {
     TimerName = Name;
@@ -345,17 +532,22 @@ class Mortal
     age = getRandomArbitrary(16, 35).toFixed(0);
 
 
-    Strength = getRandomArbitrary(1,2).toFixed(2);
-    Agility = getRandomArbitrary(1,2).toFixed(2);
-    Perception = getRandomArbitrary(0,2).toFixed(2);
-    Endurence = getRandomArbitrary(0,2).toFixed(2)
-    Luck = getRandomArbitrary(0,2).toFixed(2)
+    Strength = getRandomArbitrary(1,2);
+    Agility = getRandomArbitrary(1,2);
+    Perception = getRandomArbitrary(0,2);
+    Constituion = getRandomArbitrary(1,2)
+    Inteligence = getRandomArbitrary(0,2)
+    Endurence = getRandomArbitrary(1,2)
+    Luck = getRandomArbitrary(0,2)
 
-    MaxStamina = 100;
-    CurrentStamina = 100
+    
+    MaxStamina = (this.Endurence * 10);
+    CurrentStamina = this.MaxStamina
+    StamingaRegen = this.Constituion/5;
 
     constructor()
     {
+        console.log(typeof this.Endurence)
         Mortals[this.Name] = this;
         this.CreateHtml()
         this.MainDiv.addEventListener("dragstart", e => {
@@ -367,9 +559,11 @@ class Mortal
             this.MainDiv.classList.remove("dragging")
         })
         this.InformationDiv.addEventListener("mousemove", (e) => {this.ShowToolTip(e) })
-
+        
         this.InformationDiv.addEventListener("mouseenter", (e) => {this.InformationToolTipDiv.style.display = "block" })
         this.InformationDiv.addEventListener("mouseleave", (e) => {this.InformationToolTipDiv.style.display = "none" })
+        
+        
     }
 
     CreateHtml()
@@ -398,11 +592,11 @@ class Mortal
         "Tier: 0 \n" +
         "Age: " + this.age + "\n";
         this.StatDiv.innerText = 
-        "Strength: " + this.Strength + "\n" +
-        "Agility: " + this.Agility + "\n" +
-        "Endurence: " + this.Endurence + "\n" +
-        "Perception: " + this.Perception + "\n" +
-        "Luck: " + this.Luck + "\n" 
+        "Strength: " + this.Strength.toFixed(2) + "\n" +
+        "Agility: " + this.Agility.toFixed(2) + "\n" +
+        "Endurence: " + this.Endurence.toFixed(2) + "\n" +
+        "Perception: " + this.Perception.toFixed(2) + "\n" +
+        "Luck: " + this.Luck.toFixed(2) + "\n" 
 
         Main.appendChild(this.InformationToolTipDiv);
         this.InformationToolTipDiv.appendChild(this.InfoDiv);
@@ -421,10 +615,11 @@ class Mortal
     }
     Progress()
     {
-        if(this.MainDiv.parentElement.id == "MortalDiv" && this.CurrentStamina < this.MaxStamina)
+        if(this.CurrentStamina < this.MaxStamina)
         {
-            this.CurrentStamina += 5 / fps;
-        }  
+            this.CurrentStamina += this.Constituion / fps;
+        }
+        
     }
     UpdateHTML()
     {
@@ -432,7 +627,7 @@ class Mortal
         {
             this.StaminaBarDiv.style.width = ((this.CurrentStamina/this.MaxStamina) * 100) + "%"
             
-            this.StaminaDiv.innerText = this.CurrentStamina.toFixed(1) + "/" + this.MaxStamina
+            this.StaminaDiv.innerText = this.CurrentStamina.toFixed(1) + "/" + this.MaxStamina.toFixed(1)
         }
         else
         {
@@ -458,6 +653,7 @@ class Mortal
         
         //this.InformationToolTipDiv.style.left = "0px"
     }
+    
 }
 class Action
 {
@@ -478,13 +674,19 @@ class Action
     Stats;
 
     Num;
-    CurrentAmount = 0;
+    Completed = 0;
+    Amount = 0;
     Hidden = false;
     CurrentProgress = 0;
-    ProgressRate = 0.1;
+    ProgressRate = 0;
 
     constructor(Num)
     {
+        if(Num == 1)
+        {
+            this.Amount += 1;
+            //console.log(this.Amount)
+        }
         this.Stats = ActionDatabase[Num]
         this.Num = Num
 
@@ -494,7 +696,7 @@ class Action
             this.ActionMortalDiv.appendChild(currentlydragging);
             
         })
-
+        
         this.ActionNameDiv.addEventListener("mousemove", (e) => {this.ShowToolTip(e) })
 
         this.ActionNameDiv.addEventListener("mouseenter", (e) => {this.ActionToolTipDiv.style.display = "block" })
@@ -530,60 +732,98 @@ class Action
     {
         if ( this.Hidden == false)
         {
+            this.ProgressRate = 0;
             this.MortalsHtml = this.ActionMortalDiv.children;
+            
             for (let x = 0; x < this.MortalsHtml.length; x++)// sets progress rate of Action based off mortals working on it.
             {
                 let CurrentMortal = Mortals[this.MortalsHtml[x].id]
-                this.ProgressRate += CurrentMortal.Strength
+                //console.log(1 + (this.logEffectiveness(CurrentMortal[this.Stats.Stat] ) * 0.2))
+                this.ProgressRate += 1 + (this.logEffectiveness(CurrentMortal[this.Stats.Stat]) * 0.2)
                 CurrentMortal.CurrentStamina -= 2 / fps
             }
             if(this.CurrentProgress >= this.Stats.MaxProgress)// when actions completes once
             {
+                if ( this.Amount != -1)
+                {
+                    this.Amount -= 1;
+                }
+                let CurrentMortal = Mortals[this.MortalsHtml[0].id]
                 
-                Complete(this.Stats.Name);
+                this.Completed += 1;
+                gameData.CheckDatabase(ActionDatabase.length - 1, "Action");
+               // console.log(Object.keys(this.Stats.Completion.Actions).length)
+                for(let x = 0; x < Object.keys(this.Stats.Completion.Actions).length; x++)
+                {
+                    //console.log(Object.keys(this.Stats.Completion.Actions)[x])
+                    ActiveActions[Object.keys(this.Stats.Completion.Actions)[x]].Amount += this.Stats.Completion.Actions[Object.keys(this.Stats.Completion.Actions)[x]]
+                }
+                for(let x = 0; x < Object.keys(this.Stats.Completion.Materials).length; x++)
+                {
+                    
+                    //console.log(Object.keys(this.Stats.Completion.Actions)[x])
+                        Materials[Object.keys(this.Stats.Completion.Materials)[x]].Amount += ((this.Stats.Completion.Materials[Object.keys(this.Stats.Completion.Materials)[x]]) * this.logEffectiveness(CurrentMortal[this.Stats.Stat]))
+                }
                 this.CurrentProgress = 0;
-                this.CurrentAmount += 1;
+
             }
             this.CurrentProgress += this.ProgressRate / fps // increments Action Progress
         }
        
-        this.ProgressRate = 0;
+        
     }
     UpdateHTML()
     {
-        this.InfoDiv.innerText = 
-        "Name: " + this.Stats.Name + "\n" +
-        "Description: " + this.Stats.Desc  + "\n" +
-        "Progress: " + this.CurrentProgress.toFixed(2) + "/" + this.Stats.MaxProgress + "\n" +
-        "Completed: " + this.CurrentAmount + "/" + this.Stats.MaxAmount;
-
-        if (this.CurrentProgress != 0)
+        if (this.Hidden == false)
         {
-            this.ActionProgressDiv.style.width = ((this.CurrentProgress/this.Stats.MaxProgress) * 100) + "%"
-            this.ActionProgressTextDiv.innerText = this.CurrentProgress.toFixed(1) + "/" + this.Stats.MaxProgress + " (" + (((this.CurrentProgress/this.Stats.MaxProgress) * 100).toFixed(1) + "%") + ")"
-            
-        }
-        else
-        {
-            this.ActionProgressDiv.style.width = "0%"
-        }
-        if(this.CurrentProgress >= this.Stats.MaxProgress)// when actions completes once
-        {
-            gameData.CreateLog(this.Stats.Log);  
-        }
-        if (this.CurrentAmount == this.Stats.MaxAmount) // when actions reached max actions
+            let TimeTillEnd = this.Stats.MaxProgress / this.ProgressRate - (this.Stats.MaxProgress / this.ProgressRate) * (this.CurrentProgress / this.Stats.MaxProgress)
+            //console.log(TimeTillEnd)
+            if (isNaN(TimeTillEnd))
             {
                 
-                this.Hidden = true;
-                for(let x = 0; x < this.MortalsHtml.length; x++)
+                TimeTillEnd = 0;
+               // console.log(TimeTillEnd)
+            }
+            this.MortalsHtml = this.ActionMortalDiv.children;
+            this.InfoDiv.innerText = 
+            "Name: " + this.Stats.Name + "\n" +
+            "Description: " + this.Stats.Description  + "\n" +
+            "Stat: " + this.Stats.Stat + "\n" +
+            "Progress: " + this.CurrentProgress.toFixed(2) + "/" + this.Stats.MaxProgress  + "\n" +
+            "Progress Rate: " + this.ProgressRate.toFixed(2) + "/s (" + TimeTillEnd.toFixed(2) + " Seconds)" + "\n" +
+            "Amount: " + this.Amount +"\n" +
+            "Completed: " + this.Completed
+
+            if (this.CurrentProgress != 0)
+            {
+                this.ActionProgressDiv.style.width = ((this.CurrentProgress/this.Stats.MaxProgress) * 100) + "%"
+                this.ActionProgressTextDiv.innerText = this.CurrentProgress.toFixed(1) + "/" + this.Stats.MaxProgress + " (" + (((this.CurrentProgress/this.Stats.MaxProgress) * 100).toFixed(1) + "%") + ")"
+                
+            }
+            else
+            {
+                this.ActionProgressDiv.style.width = "0%"
+                this.ActionProgressTextDiv.innerText = "0.0/" + this.Stats.MaxProgress.toFixed(1);
+            }
+            if(this.CurrentProgress >= this.Stats.MaxProgress)// when actions completes once
+            {
+                gameData.CreateLog(this.Stats.Log);  
+            }
+            if (this.Amount == 0) // when actions reached max actions
                 {
-                    MortalDiv.appendChild(this.MortalsHtml[x])
-                }
-            } 
-        if(this.Hidden == true)
-        {
-            
-            this.MainDiv.style.display = "none";
+                    
+
+                    this.Hidden = true;
+                    for(let x = 0; x < this.MortalsHtml.length; x++)
+                    {
+                        MortalDiv.appendChild(this.MortalsHtml[x])
+                    }
+                } 
+            if(this.Hidden == true)
+            {
+                
+                this.MainDiv.style.display = "none";
+            }
         }
     }
     ShowToolTip(event)
@@ -600,6 +840,19 @@ class Action
             this.ActionToolTipDiv.style.right = ""
             this.ActionToolTipDiv.style.left = event.clientX + 5 +"px"
             this.ActionToolTipDiv.style.top = event.clientY + 5 + "px"
+        }
+    }
+    logEffectiveness(stat) {
+        if (stat < 10.01)// 0 = 1 = 
+        {
+            let scale = 2
+            let shift = 1
+            let base = 5
+            return (scale * Math.log(stat + shift) / Math.log(base)) + 1;
+        }
+        if (stat > 10 && stat < 50)
+        {
+            
         }
     }
 }
@@ -638,7 +891,7 @@ class Material
     Update()
     {
         
-        this.AmountDiv.innerText = this.Amount + "/" + this.MaxAmount
+        this.AmountDiv.innerText = this.Amount.toFixed(2) + "/" + this.MaxAmount
     }
 }
 class Building
@@ -652,6 +905,7 @@ class Building
     BuildingToolTipDiv = document.createElement("div");
 
     Stats;
+    Level = 0;
     CurrentAmount = 0;
     Hidden = false;
     CurrentProgress = 0;
@@ -659,7 +913,7 @@ class Building
 
     constructor(Num)
     {
-        this.Stats = BuildDatabase[Num]
+        this.Stats = BuildingDatabase[Num]
         this.CreateHtml()
 
         this.BuildingMortalDiv.addEventListener("dragover", ()=>{
@@ -819,8 +1073,10 @@ class Game
         if (elapsed > fpsInterval)
         {
             then = now - (elapsed % fpsInterval);
-            this.ActionManager()
-            this.BuildingManager()
+            //this.ActionManager()
+            //this.BuildingManager()
+            this.CheckDatabase(ActionDatabase.length - 1, "Action")
+            this.CheckDatabase(BuildingDatabase.length - 1, "Building")
 
             this.LoopThrough(Object.keys(ActiveActions).length - 1,"Action")
             this.LoopThrough(Object.keys(Mortals).length - 1,"Mortal")
@@ -831,90 +1087,76 @@ class Game
 
         requestAnimationFrame(() => this.MainLoop())
     }
-    ActionManager()
+    CheckDatabase(NumOfLoops, Type)
     {
-        this.CheckActionDatabase(ActionDatabase.length - 1)
-
-    }
-    CheckActionDatabase(NumOfLoops)
-    {
-        let CreateAction = [];
-        let CurrentAction = ActionDatabase[NumOfLoops];
-
-        if(ActiveActions[CurrentAction.Name] == undefined)
+        if (Type == "Action")
         {
-           
-            CreateAction.push(this.CheckRequirements(CurrentAction.Reqs.Acts,Object.keys(CurrentAction.Reqs.Acts).length - 1, "Actions"));
-            if(this.CheckRequirements(CurrentAction.Reqs.Acts,Object.keys(CurrentAction.Reqs.Acts).length - 1, "Actions") == true)
+            let CreateAction = [];
+            let CurrentAction = ActionDatabase[NumOfLoops];
+
+            if(ActiveActions[CurrentAction.Name] == undefined)
             {
-                //console.log(CurrentAction.Name + " Passed Action Check");
+                //console.log(CurrentAction.Name + " is trying to pass the action test")
+                CreateAction.push(this.CheckRequirements(CurrentAction.Requirements.Actions,Object.keys(CurrentAction.Requirements.Actions).length - 1, "Actions"));
+                // if (this.CheckRequirements(CurrentAction.Requirements.Actions,Object.keys(CurrentAction.Requirements.Actions).length - 1, "Actions"))
+                // {
+                //     console.log(CurrentAction.Name + " has passed the action test")
+                // }
+                //console.log(CurrentAction.Name + " is trying to pass the Material test")
+                CreateAction.push(this.CheckRequirements(CurrentAction.Requirements.Materials,Object.keys(CurrentAction.Requirements.Materials).length - 1, "Materials"));
+                CreateAction.push(this.CheckRequirements(CurrentAction.Requirements.Buildings,Object.keys(CurrentAction.Requirements.Buildings).length - 1, "Buildings"));
+                if(CreateAction.includes(false) != true )
+                {
+                    new Action(NumOfLoops)
+                }
             }
-            CreateAction.push(this.CheckRequirements(CurrentAction.Reqs.Mats,Object.keys(CurrentAction.Reqs.Mats).length - 1, "Materials"));
-            if(this.CheckRequirements(CurrentAction.Reqs.Mats,Object.keys(CurrentAction.Reqs.Mats).length - 1, "Materials") == true)
+
+            if (NumOfLoops != 1)// end at 1
             {
-                //console.log(CurrentAction.Name + " Passed Material Check");
-            }
-            if(CreateAction.includes(false) != true )
-            {
-                new Action(NumOfLoops)
+                this.CheckDatabase(--NumOfLoops, "Action");
             }
         }
-
-        if (NumOfLoops != 1)// end at 1
+        if (Type == "Building")
         {
-            this.CheckActionDatabase(--NumOfLoops);
-        }
-    }
-    BuildingManager()
-    {
-        this.CheckBuildingDatabase(BuildDatabase.length - 1)
-    }
-    CheckBuildingDatabase(NumOfLoops)
-    {
-        let CreateBuilding = [];
-        let CurrentBuilding = BuildDatabase[NumOfLoops]
-        if(ActiveBuildings[CurrentBuilding.Name] == undefined)
-        {
-            
-            CreateBuilding.push(this.CheckRequirements(CurrentBuilding.Reqs.Acts,Object.keys(CurrentBuilding.Reqs.Acts).length - 1,"Actions"));
-            if(this.CheckRequirements(CurrentBuilding.Reqs.Acts,Object.keys(CurrentBuilding.Reqs.Acts).length - 1,"Actions") == true)
+            let CreateBuilding = [];
+            let CurrentBuilding = BuildingDatabase[NumOfLoops]
+            if(ActiveBuildings[CurrentBuilding.Name] == undefined)
             {
-                //console.log(CurrentBuilding.Name + " Passed Action Check");
+               // console.log(CurrentBuilding.Name + " is trying to pass the action test")
+                CreateBuilding.push(this.CheckRequirements(CurrentBuilding.Requirements.Actions,Object.keys(CurrentBuilding.Requirements.Actions).length - 1,"Actions"));
+                //console.log(CurrentBuilding.Name + " is trying to pass the material test")
+                CreateBuilding.push(this.CheckRequirements(CurrentBuilding.Requirements.Materials,Object.keys(CurrentBuilding.Requirements.Materials).length - 1,"Materials"));
+                CreateBuilding.push(this.CheckRequirements(CurrentBuilding.Requirements.Buildings,Object.keys(CurrentBuilding.Requirements.Buildings).length - 1, "Buildings"));
+                if(CreateBuilding.includes(false) != true)
+                {
+                    
+                    new Building(NumOfLoops)
+                }
             }
-            CreateBuilding.push(this.CheckRequirements(CurrentBuilding.Reqs.Mats,Object.keys(CurrentBuilding.Reqs.Mats).length - 1,"Materials"));
-            if(this.CheckRequirements(CurrentBuilding.Reqs.Mats,Object.keys(CurrentBuilding.Reqs.Mats).length - 1,"Materials") == true)
-            {
-                //console.log(CurrentBuilding.Name + " Passed Material Check");
-            }
-            if(CreateBuilding.includes(false) != true)
-            {
-                
-                new Building(NumOfLoops)
-            }
-        }
 
-      
-
-        if (NumOfLoops != 1)// end at 1
-        {
-            this.CheckBuildingDatabase(--NumOfLoops);
+            if (NumOfLoops != 1)// end at 1
+            {
+                this.CheckDatabase(--NumOfLoops, "Building");
+            }
         }
     }
     CheckRequirements(Requirements, NumOfLoops,Type)
     {
         let RequirementCheck = Object.keys(Requirements)[NumOfLoops];
         let ValueCheck = Object.values(Requirements)[NumOfLoops];
+        //console.log(RequirementCheck)
         //console.log(NumOfLoops);
         
         if (Type == "Actions")
         {
-            
+            //console.log(ActiveActions)
+           // console.log(ActiveActions[RequirementCheck])
             if(ActiveActions[RequirementCheck] != undefined)
             {
-                
-                if (ActiveActions[RequirementCheck].CurrentAmount != ValueCheck)
+                //console.log("whatsssss")
+                if (ActiveActions[RequirementCheck].Completed != ValueCheck)
                 {
-                    
+                   // console.log(RequirementCheck + ": " + ActiveActions[RequirementCheck].Completed + " != " + ValueCheck)
                     return false;
                 }
             }
@@ -947,13 +1189,32 @@ class Game
                 return false
             }
         }
-        
+        if(Type == "Buildings")
+        {
+            //console.log(Materials[RequirementCheck])
+            if(ActiveBuildings[RequirementCheck] != undefined)
+            {
+                if(ActiveBuildings[RequirementCheck].Level <= ValueCheck)
+                {
+                    
+                    return false
+                }
+            }
+            else if (NumOfLoops == -1)
+            {
+                return true
+            }
+            else
+            {
+                return false
+            }
+        }
        
 
 
         if (NumOfLoops >= 1)// end at 0
         {
-            this.CheckActionRequirements(Requirements,--NumOfLoops);
+            this.CheckActionRequirements(Requirements,--NumOfLoops, Type);
         }
         return true;
     }
@@ -969,7 +1230,7 @@ class Game
             
             ActiveActions[action].UpdateHTML();
             ActiveActions[action].Progress()
-            console.log(NumOfLoops)
+            //console.log(NumOfLoops)
             //Object.values(ActiveActions)[NumOfLoops - 1].Progress(TickRate)
             
         }
@@ -996,11 +1257,20 @@ class Game
     CreateLog(Message)
     {
         let NewLog = document.createElement('div');
-    
         NewLog.classList.add("LogDiv");
     
-        let date = new Date(); 
-        NewLog.innerText = date.getHours() + ":" + date.getMinutes() + " - " + Message;
+        const now = new Date();
+        let hours = now.getHours();
+        let minutes = now.getMinutes();
+        let seconds = now.getSeconds();
+
+        // Ensure two-digit formatting for hours, minutes, and seconds
+        hours = hours < 10 ? '0' + hours : hours;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+
+        
+        NewLog.innerText = `${hours}:${minutes}:${seconds}` + " - " + Message;
     
         
     
@@ -1063,8 +1333,33 @@ class Game
 
         }, {offset: Number.NEGATIVE_INFINITY}).element;
     }
+    logEffectiveness(stat) {
+        if (stat < 10.01)// 0 = 1 = 
+        {
+            let scale = 2
+            let shift = 1
+            let base = 5
+            return (scale * Math.log(stat + shift) / Math.log(base)) + 1;
+        }
+        if (stat > 10 && stat < 50)
+        {
+            
+        }
+    }
+    
 }
 
 let gameData = new Game;
 
-const accumulator = {"offest": 2}
+        console.log("stat 0 = " +  gameData.logEffectiveness(0));
+        console.log("stat 1 = " +  gameData.logEffectiveness(1));
+        console.log("stat 2 = " +  gameData.logEffectiveness(2));
+        console.log("stat 4 = " +  gameData.logEffectiveness(4));
+        console.log("stat 6 = " +  gameData.logEffectiveness(6));
+        console.log("stat 8 = " +  gameData.logEffectiveness(8));
+        console.log("stat 10 = " +  gameData.logEffectiveness(10));
+
+        // console.log("stat 10 = " + gameData.logEffectiveness(10));
+        // console.log("stat 50 = " + gameData.logEffectiveness(50));
+        // console.log("stat 250 = " + gameData.logEffectiveness(250));
+        // console.log("stat 1000 = " + gameData.logEffectiveness(1000));
